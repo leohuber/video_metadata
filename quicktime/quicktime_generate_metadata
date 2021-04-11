@@ -33,53 +33,61 @@ else
     fi
 fi
 
+SOFTWARE='Created with FiLMiC Pro6.10.910065 / iOS 14.4'
+softw=$(exiftool -q -q -b -keys:Software ${video_file})
+if [ ! -z "$softw" ]; then
+    SOFTWARE=$softw
+fi
+
+MAKE='Apple'
+mak=$(exiftool -q -q -b -keys:Make ${video_file})
+if [ ! -z "$mak" ]; then
+    MAKE=$mak
+fi
+
+MODEL='iPhone 11 Pro'
+mod=$(exiftool -q -q -b -keys:Model ${video_file})
+if [ ! -z "$mod" ]; then
+    MODEL=$mod
+fi
+
+GPS='-35.2975906, 149.1012676, 554'
+gps_coord=$(exiftool -q -q -b -keys:GPSCoordinates ${video_file})
+if [ ! -z "$gps_coord" ]; then
+    GPS=$gps_coord
+fi
+
+COMMENT=''
+com=$(exiftool -q -q -b -keys:DisplayName ${video_file})
+if [ ! -z "$com" ]; then
+    COMMENT=$com
+fi
+
 rm $meta_file &> /dev/null
 touch $meta_file
-echo "# Generated Meta Data file for video" >>  $meta_file
-echo "" >>  $meta_file
-echo "IDENTIFIER=''" >>  $meta_file
-echo "" >>  $meta_file
-echo "DATE_CREATED='${DATE_CREATED}'" >>  $meta_file
-echo "" >>  $meta_file
-echo "SOFTWARE=''" >>  $meta_file
-echo "MODEL=''" >>  $meta_file
-echo "MAKE=''" >>  $meta_file
-echo "GPS='-35.2975906, 149.1012676, 554'" >>  $meta_file
-echo "COMMENT=''" >>  $meta_file
-echo "" >>  $meta_file
-echo "COUNTRY_CODE='CHE'" >>  $meta_file
-echo "COUNTRY=''" >>  $meta_file
-echo "STATE=''" >>  $meta_file
-echo "CITY=''" >>  $meta_file
-echo "SUBLOCATION=''" >>  $meta_file
-echo "" >>  $meta_file
-echo "HEADLINE=''" >>  $meta_file
-echo "TITLE_SUFFIX=''" >>  $meta_file
-echo "DESCRIPTION=''" >>  $meta_file
-echo "COPYRIGHT='Leo Huber'" >>  $meta_file
-echo "" >>  $meta_file
-echo "PERSON_SHOWN=''" >>  $meta_file
-echo "EVENT=''" >>  $meta_file
-echo "" >>  $meta_file
-echo "" >>  $meta_file
-echo "" >>  $meta_file
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+echo "# Generated Meta Data file for video ${video_file}" >> $meta_file
+echo "" >> $meta_file
+echo "IDENTIFIER=''" >> $meta_file
+echo "" >> $meta_file
+echo "DATE_CREATED='${DATE_CREATED}'" >> $meta_file
+echo "" >> $meta_file
+echo "MAKE='${MAKE}'" >> $meta_file
+echo "MODEL='${MODEL}'" >> $meta_file
+echo "SOFTWARE='${SOFTWARE}'" >> $meta_file
+echo "GPS='${GPS}'" >> $meta_file
+echo "COMMENT='${COMMENT}'" >> $meta_file
+echo "" >> $meta_file
+echo "COUNTRY_CODE='CHE'" >> $meta_file
+echo "COUNTRY=''" >> $meta_file
+echo "STATE=''" >> $meta_file
+echo "CITY=''" >> $meta_file
+echo "SUBLOCATION=''" >> $meta_file
+echo "" >> $meta_file
+echo "HEADLINE=''" >> $meta_file
+echo "TITLE_SUFFIX=''" >> $meta_file
+echo "DESCRIPTION=''" >> $meta_file
+echo "COPYRIGHT='Leo Huber'" >> $meta_file
+echo "" >> $meta_file
+echo "PERSON_SHOWN=''" >> $meta_file
+echo "EVENT=''" >> $meta_file
+echo "" >> $meta_file
