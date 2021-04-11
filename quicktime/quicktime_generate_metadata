@@ -65,7 +65,7 @@ fi
 
 rm $meta_file &> /dev/null
 touch $meta_file
-echo "# Generated Meta Data file for video ${video_file}" >> $meta_file
+echo "# Generated meta data file for video ${video_file}" >> $meta_file
 echo "" >> $meta_file
 echo "IDENTIFIER=''" >> $meta_file
 echo "" >> $meta_file
