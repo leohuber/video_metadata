@@ -2,5 +2,7 @@
 *.MOV
 *.txt
 *.TXT
+*.mts
+*.MTS
 **/.DS_Store
 **/meta/*.txt

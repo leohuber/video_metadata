@@ -22,7 +22,7 @@ check_video_file_exists
 meta_file="${video_file%%.*}.txt"
 
 # Try to extract the date
-DATE_CREATED='2005:10:23 20:06:34.33-05:00'
+DATE_CREATED='2005:10:23 20:06:34.33-05:00 - DEFAULT'
 datec=$(exiftool -q -q -b -keys:CreationDate ${video_file})
 if [ ! -z "$datec" ]; then
     DATE_CREATED=$datec
@@ -33,25 +33,25 @@ else
     fi
 fi
 
-SOFTWARE='Created with FiLMiC Pro6.10.910065 / iOS 14.4'
+SOFTWARE='Created with FiLMiC Pro6.10.910065 / iOS 14.4 - DEFAULT'
 softw=$(exiftool -q -q -b -keys:Software ${video_file})
 if [ ! -z "$softw" ]; then
     SOFTWARE=$softw
 fi
 
-MAKE='Apple'
+MAKE='Apple - DEFAULT'
 mak=$(exiftool -q -q -b -keys:Make ${video_file})
 if [ ! -z "$mak" ]; then
     MAKE=$mak
 fi
 
-MODEL='iPhone 11 Pro'
+MODEL='iPhone 11 Pro - DEFAULT'
 mod=$(exiftool -q -q -b -keys:Model ${video_file})
 if [ ! -z "$mod" ]; then
     MODEL=$mod
 fi
 
-GPS='-35.2975906, 149.1012676, 554'
+GPS='-35.2975906, 149.1012676, 554 - DEFAULT'
 gps_coord=$(exiftool -q -q -b -keys:GPSCoordinates ${video_file})
 if [ ! -z "$gps_coord" ]; then
     GPS=$gps_coord
