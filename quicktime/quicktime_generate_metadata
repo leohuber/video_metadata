@@ -1,2 +1,85 @@
 #!/bin/bash
 
+video_file=$1
+id=""
+meta_files=""
+processed=false
+meta_file=""
+
+error_exit() {
+  echo "$1" 1>&2
+  exit 1
+}
+
+check_video_file_exists() {
+	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
+}
+
+# Check if the provided video file exists
+check_video_file_exists
+
+# Create meta data file name
+meta_file="${video_file%%.*}.txt"
+
+# Try to extract the date
+DATE_CREATED='2005:10:23 20:06:34.33-05:00'
+datec=$(exiftool -q -q -b -keys:CreationDate ${video_file})
+if [ ! -z "$datec" ]; then
+    DATE_CREATED=$datec
+else
+    datec=$(exiftool -q -q -b -CreateDate ${video_file})
+    if [ ! -z "$datec" ]; then
+        DATE_CREATED=$datec
+    fi
+fi
+
+rm $meta_file &> /dev/null
+touch $meta_file
+echo "# Generated Meta Data file for video" >>  $meta_file
+echo "" >>  $meta_file
+echo "IDENTIFIER=''" >>  $meta_file
+echo "" >>  $meta_file
+echo "DATE_CREATED='${DATE_CREATED}'" >>  $meta_file
+echo "" >>  $meta_file
+echo "SOFTWARE=''" >>  $meta_file
+echo "MODEL=''" >>  $meta_file
+echo "MAKE=''" >>  $meta_file
+echo "GPS='-35.2975906, 149.1012676, 554'" >>  $meta_file
+echo "COMMENT=''" >>  $meta_file
+echo "" >>  $meta_file
+echo "COUNTRY_CODE='CHE'" >>  $meta_file
+echo "COUNTRY=''" >>  $meta_file
+echo "STATE=''" >>  $meta_file
+echo "CITY=''" >>  $meta_file
+echo "SUBLOCATION=''" >>  $meta_file
+echo "" >>  $meta_file
+echo "HEADLINE=''" >>  $meta_file
+echo "TITLE_SUFFIX=''" >>  $meta_file
+echo "DESCRIPTION=''" >>  $meta_file
+echo "COPYRIGHT='Leo Huber'" >>  $meta_file
+echo "" >>  $meta_file
+echo "PERSON_SHOWN=''" >>  $meta_file
+echo "EVENT=''" >>  $meta_file
+echo "" >>  $meta_file
+echo "" >>  $meta_file
+echo "" >>  $meta_file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

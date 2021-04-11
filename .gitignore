@@ -1,4 +1,6 @@
 *.mov
 *.MOV
+*.txt
+*.TXT
 **/.DS_Store
 **/meta/*.txt
