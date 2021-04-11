@@ -1,0 +1,4 @@
+*.mov
+*.MOV
+**/.DS_Store
+**/meta/*.txt
