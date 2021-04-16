@@ -21,15 +21,22 @@ check_video_file_exists
 # Create meta data file name
 meta_file="${video_file%%.*}.txt"
 
-# Try to extract the date
+# Try to extract the date & create an identifier
 DATE_CREATED='2005:10:23 20:06:34.33-05:00 - DEFAULT'
+IDENTIFIER='20051023_200634 - DEFAULT'
 datec=$(exiftool -q -q -b -keys:CreationDate ${video_file})
 if [ ! -z "$datec" ]; then
     DATE_CREATED=$datec
+    IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+    IDENTIFIER=${IDENTIFIER// /_}
+    IDENTIFIER=${IDENTIFIER//:/}
 else
     datec=$(exiftool -q -q -b -CreateDate ${video_file})
     if [ ! -z "$datec" ]; then
         DATE_CREATED=$datec
+        IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+        IDENTIFIER=${IDENTIFIER// /_}
+        IDENTIFIER=${IDENTIFIER//:/}
     fi
 fi
 
@@ -63,11 +70,11 @@ if [ ! -z "$com" ]; then
     COMMENT=$com
 fi
 
-rm $meta_file &> /dev/null
+rm -f $meta_file &> /dev/null
 touch $meta_file
 echo "# Generated meta data file for video ${video_file}" >> $meta_file
 echo "" >> $meta_file
-echo "IDENTIFIER=''" >> $meta_file
+echo "IDENTIFIER='${IDENTIFIER}'" >> $meta_file
 echo "" >> $meta_file
 echo "DATE_CREATED='${DATE_CREATED}'" >> $meta_file
 echo "" >> $meta_file
