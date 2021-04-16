@@ -11,36 +11,8 @@ error_exit() {
   exit 1
 }
 
-fetch_meta_files() {
-	meta_files=`ls ./meta/*.txt 2> /dev/null` || error_exit "Could not load meta files"
-}
-
-check_video_file_exists() {
+check_file_exists() {
 	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
-}
-
-fetch_identifier() {
-	id=$(echo $1 | cut -c1-15)
-}
-
-cleanup_vars() {
-	unset IDENTIFIER
-	unset SOFTWARE
-	unset MODEL
-	unset MAKE
-	unset GPS
-	unset COMMENT
-	unset SUBLOCATION
-	unset STATE
-	unset CITY
-	unset COUNTRY
-	unset COUNTRY_CODE
-	unset TITLE_SUFFIX
-	unset DESCRIPTION
-	unset COPYRIGHT
-	unset PERSON_SHOWN
-	unset EVENT
-	unset DATE_CREATED
 }
 
 set_quicktime_keys_tags() {
@@ -82,26 +54,15 @@ set_xmp_tiff_namespace_tags() {
 	exiftool -overwrite_original -xmp:Model="${MODEL}" -xmp:Make="${MAKE}" -xmp:ImageDescription="${DESCRIPTION}" $video_file &> /dev/null || error_exit "Could not update xmp tiff namespace tags"
 }
 
+# Check if video file exists
+check_file_exists $video_file
 
-check_video_file_exists $video_file
-fetch_identifier $video_file
-fetch_meta_files
+# Create meta data file name
+meta_file="${video_file%%.*}.txt"
 
-# Check if there is a metadata file with a corresponding identifier
-for file in $meta_files
-do
-	source $file
-	if [ "$id" == "$IDENTIFIER" ]; then
-		meta_file=$file
-		processed=true
-		break
-	fi
-	cleanup_vars
-done
-
-if ! $processed; then
-	error_exit "Could not find meta data for identifier: ${id}"
-fi
+# Check if meta file exists and load variables
+check_file_exists $meta_file
+source $meta_file
 
 # Load template file if it exists
 if test -f "./zzz_meta_data_template.txt"; then
@@ -127,5 +88,5 @@ set_xmp_tiff_namespace_tags
 mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.mov
 
 # Rename movie file
-mv $meta_file ./meta/${IDENTIFIER}_${TITLE_SUFFIX}.txt
+mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}.txt
 
