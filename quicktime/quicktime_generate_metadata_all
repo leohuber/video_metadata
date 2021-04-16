@@ -1,0 +1,3 @@
+#!/bin/bash
+
+for movie_file in *.mov; do quicktime_generate_metadata ${movie_file}; done;
