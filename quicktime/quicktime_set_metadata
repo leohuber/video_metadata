@@ -103,6 +103,11 @@ if ! $processed; then
 	error_exit "Could not find meta data for identifier: ${id}"
 fi
 
+# Load template file if it exists
+if test -f "./zzz_meta_data_template.txt"; then
+    source "./zzz_meta_data_template.txt"
+fi
+
 # Set XMP Dynamic Media Tags
 set_xmp_dm_tags
 
