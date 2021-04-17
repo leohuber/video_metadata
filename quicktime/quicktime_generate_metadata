@@ -19,7 +19,7 @@ check_video_file_exists() {
 check_video_file_exists
 
 # Create meta data file name
-meta_file="${video_file%%.*}.txt"
+meta_file="${video_file%%.*}_meta.txt"
 
 # Try to extract the date & create an identifier
 DATE_CREATED='2005:10:23 20:06:34.33-05:00 - DEFAULT'
@@ -64,11 +64,15 @@ if [ ! -z "$gps_coord" ]; then
     GPS=$gps_coord
 fi
 
+# TODO: generate ffprope string and add it to the COMMENT variable
 COMMENT=''
 com=$(exiftool -q -q -b -keys:DisplayName ${video_file})
 if [ ! -z "$com" ]; then
     COMMENT=$com
 fi
+
+# TODO: generate LOGCOMMENT string
+
 
 rm -f $meta_file &> /dev/null
 touch $meta_file

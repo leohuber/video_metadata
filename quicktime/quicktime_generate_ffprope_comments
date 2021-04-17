@@ -1,0 +1,16 @@
+#!/bin/bash
+
+video_file=$1
+id=""
+meta_files=""
+processed=false
+meta_file=""
+
+error_exit() {
+  echo "$1" 1>&2
+  exit 1
+}
+
+check_video_file_exists() {
+	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
+}

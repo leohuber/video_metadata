@@ -58,7 +58,7 @@ set_xmp_tiff_namespace_tags() {
 check_file_exists $video_file
 
 # Create meta data file name
-meta_file="${video_file%%.*}.txt"
+meta_file="${video_file%%.*}_meta.txt"
 
 # Check if meta file exists and load variables
 check_file_exists $meta_file
@@ -88,5 +88,5 @@ set_xmp_tiff_namespace_tags
 mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.mov
 
 # Rename movie file
-mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}.txt
+mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
 
