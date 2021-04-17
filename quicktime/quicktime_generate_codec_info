@@ -25,15 +25,6 @@ if [ ! -z "$com" ]; then
     COMMENT=$com
 fi
 
-# TODO: generate LOGCOMMENT string
-
-rm -f $codec_info &> /dev/null
-touch $codec_info
-echo "# Generated ffprobe data file for video ${video_file}" >> $codec_info
-echo "COMMENT='${COMMENT}'" >> $codec_info
-echo "" >> $codec_info
-echo "LOGCOMMENT=''" >> $codec_info
-
 # Format
 format=$(mediainfo -f --Output='Video;%Format%' ${video_file})
 format_info=$(mediainfo -f --Output='Video;%Format/Info%' ${video_file})
@@ -58,7 +49,7 @@ if [ ! -z "$format" ] || [ ! -z "$format_info" ] || [ ! -z "$format_profile" ] |
       format_out="${format_out}${cs}${format_settings}"
       cs=", "
     fi
-    LOGCOMMENT=${format_out}
+    COMMENT=${format_out}
 fi
 
 # Pixel Format
@@ -80,7 +71,7 @@ if [ ! -z "$colorspace" ] || [ ! -z "$chroma_subsampling" ] || [ ! -z "$bitdepth
       format_out="${format_out}${cs}BitDepth=${bitdepth}"
       cs=", "
     fi
-    LOGCOMMENT="${LOGCOMMENT}
+    COMMENT="${COMMENT}
 ${format_out}"
 fi
 
@@ -108,7 +99,7 @@ if [ ! -z "$framerate_mode" ] || [ ! -z "$framerate" ] || [ ! -z "$framerate_min
       format_out="${format_out}${cs}Max=${framerate_max}"
       cs=", "
     fi
-    LOGCOMMENT="${LOGCOMMENT}
+    COMMENT="${COMMENT}
 ${format_out}"
 fi
 
@@ -132,7 +123,7 @@ if [ ! -z "$scantype" ] || [ ! -z "$scantype_storemethod" ] || [ ! -z "$scanorde
       format_out="${format_out}${cs}ScanOrder=${scanorder}"
       cs=", "
     fi
-    LOGCOMMENT="${LOGCOMMENT}
+    COMMENT="${COMMENT}
 ${format_out}"
 fi
 
@@ -160,7 +151,7 @@ if [ ! -z "$bitrate_mode" ] || [ ! -z "$bitrate" ] || [ ! -z "$bitrate_min" ] ||
       format_out="${format_out}${cs}Max=${bitrate_max}"
       cs=", "
     fi
-    LOGCOMMENT="${LOGCOMMENT}
+    COMMENT="${COMMENT}
 ${format_out}"
 fi
 
@@ -183,7 +174,7 @@ if [ ! -z "$colour_primaries" ] || [ ! -z "$transfer_characteristics" ] || [ ! -
       format_out="${format_out}${cs}MatrixCoefficients=${matrix_coefficients}"
       cs=", "
     fi
-    LOGCOMMENT="${LOGCOMMENT}
+    COMMENT="${COMMENT}
 ${format_out}"
 fi
 
@@ -211,8 +202,14 @@ if [ ! -z "$height" ] || [ ! -z "$width" ] || [ ! -z "$aspect_ratio" ]; then
       format_out="${format_out}${cs}Rotation=${rotation}"
       cs=", "
     fi
-    LOGCOMMENT="${LOGCOMMENT}
+    COMMENT="${COMMENT}
 ${format_out}"
 fi
 
-echo "$LOGCOMMENT"
+# generate COMMENT string
+
+rm -f $codec_info &> /dev/null
+touch $codec_info
+echo "# Generated ffprobe data file for video ${video_file}" >> $codec_info
+echo "" >> $codec_info
+echo "COMMENT='${COMMENT}'" >> $codec_info

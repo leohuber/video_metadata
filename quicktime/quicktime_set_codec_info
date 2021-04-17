@@ -1,1 +1,9 @@
 #!/bin/bash
+
+exiftool -overwrite_original -Keys:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
+
+# When updating the field "Copyright Notice", Adobe Bridge updates both, the xmp filed "xmp:Rights" and the field "itemlist:Copyright" with the same value.
+# Therefore ,make sure both fields are updated. The same holds for the fields "xmp:Title" / "itemlist:Title" and "xmp:LogComment" / "itemlist:Comment"
+exiftool -overwrite_original -itemlist:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
+
+exiftool -overwrite_original -xmp:LogComment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update tag xmp:LogComment"

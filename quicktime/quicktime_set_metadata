@@ -24,7 +24,7 @@ set_quicktime_keys_tags() {
 
 	# When updating the field "Copyright Notice", Adobe Bridge updates both, the xmp filed "xmp:Rights" and the field "itemlist:Copyright" with the same value.
 	# Therefore ,make sure both fields are updated. The same holds for the fields "xmp:Title" / "itemlist:Title" and "xmp:LogComment" / "itemlist:Comment"
-	exiftool -overwrite_original -itemlist:Copyright="${COPYRIGHT}" -itemlist:Title="${IDENTIFIER}_${TITLE_SUFFIX}" -itemlist:Comment="${COMMENT}" \
+	exiftool -overwrite_original -itemlist:Copyright="${COPYRIGHT}" -itemlist:Title="${IDENTIFIER}_${TITLE_SUFFIX}" \
 		$video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
 }
 
@@ -33,7 +33,7 @@ set_xmp_dm_tags() {
 	exiftool -if "defined($SourceImageWidth)" -overwrite_original "-xmp:VideoFrameSizeW<SourceImageWidth" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeW"
 	exiftool -if "defined($VideoFrameRate)" -overwrite_original "-xmp:VideoFrameRate<VideoFrameRate" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameRate"
 	exiftool -if "defined($CompressorName)" -overwrite_original "-xmp:VideoCompressor<CompressorName" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoCompressorName"
-	exiftool -overwrite_original -xmp:VideoFrameSizeUnit="pixels" -xmp:ShotDate="${DATE_CREATED}" -xmp:LogComment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeUnit or xmp:LogComment"
+	exiftool -overwrite_original -xmp:VideoFrameSizeUnit="pixels" -xmp:ShotDate="${DATE_CREATED}" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeUnit or xmp:ShotDate"
 }
 
 set_xmp_core_schema_tags() {
