@@ -58,7 +58,7 @@ if [ ! -z "$format" ] || [ ! -z "$format_info" ] || [ ! -z "$format_profile" ] |
       format_out="${format_out}${cs}${format_settings}"
       cs=", "
     fi
-    echo $format_out
+    LOGCOMMENT=${format_out}
 fi
 
 # Pixel Format
@@ -80,7 +80,8 @@ if [ ! -z "$colorspace" ] || [ ! -z "$chroma_subsampling" ] || [ ! -z "$bitdepth
       format_out="${format_out}${cs}BitDepth=${bitdepth}"
       cs=", "
     fi
-    echo $format_out
+    LOGCOMMENT="${LOGCOMMENT}
+${format_out}"
 fi
 
 # Frame Rate
@@ -107,7 +108,8 @@ if [ ! -z "$framerate_mode" ] || [ ! -z "$framerate" ] || [ ! -z "$framerate_min
       format_out="${format_out}${cs}Max=${framerate_max}"
       cs=", "
     fi
-    echo $format_out
+    LOGCOMMENT="${LOGCOMMENT}
+${format_out}"
 fi
 
 
@@ -130,7 +132,8 @@ if [ ! -z "$scantype" ] || [ ! -z "$scantype_storemethod" ] || [ ! -z "$scanorde
       format_out="${format_out}${cs}ScanOrder=${scanorder}"
       cs=", "
     fi
-    echo $format_out
+    LOGCOMMENT="${LOGCOMMENT}
+${format_out}"
 fi
 
 # Bit Rate:
@@ -157,7 +160,8 @@ if [ ! -z "$bitrate_mode" ] || [ ! -z "$bitrate" ] || [ ! -z "$bitrate_min" ] ||
       format_out="${format_out}${cs}Max=${bitrate_max}"
       cs=", "
     fi
-    echo $format_out
+    LOGCOMMENT="${LOGCOMMENT}
+${format_out}"
 fi
 
 # Color
@@ -179,7 +183,8 @@ if [ ! -z "$colour_primaries" ] || [ ! -z "$transfer_characteristics" ] || [ ! -
       format_out="${format_out}${cs}MatrixCoefficients=${matrix_coefficients}"
       cs=", "
     fi
-    echo $format_out
+    LOGCOMMENT="${LOGCOMMENT}
+${format_out}"
 fi
 
 # Dimensions
@@ -188,7 +193,7 @@ width=$(mediainfo -f --Output='Video;%Width%' ${video_file})
 aspect_ratio=$(mediainfo -f --Output='Video;%DisplayAspectRatio/String%' ${video_file})
 rotation=$(mediainfo -f --Output='Video;%Rotation%' ${video_file})
 if [ ! -z "$height" ] || [ ! -z "$width" ] || [ ! -z "$aspect_ratio" ]; then
-    format_out="Color:"
+    format_out="Dimensions:"
     cs=" "
     if [ ! -z "$height" ]; then
       format_out="${format_out}${cs}Height=${height}"
@@ -206,5 +211,8 @@ if [ ! -z "$height" ] || [ ! -z "$width" ] || [ ! -z "$aspect_ratio" ]; then
       format_out="${format_out}${cs}Rotation=${rotation}"
       cs=", "
     fi
-    echo $format_out
+    LOGCOMMENT="${LOGCOMMENT}
+${format_out}"
 fi
+
+echo "$LOGCOMMENT"
