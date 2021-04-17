@@ -12,7 +12,6 @@ echo "MAKE='${MAKE}'" >> $meta_file
 echo "MODEL='${MODEL}'" >> $meta_file
 echo "SOFTWARE='${SOFTWARE}'" >> $meta_file
 echo "GPS='${GPS}'" >> $meta_file
-echo "COMMENT='${COMMENT}'" >> $meta_file
 echo "" >> $meta_file
 echo "COUNTRY_CODE='CHE'" >> $meta_file
 echo "COUNTRY=''" >> $meta_file
