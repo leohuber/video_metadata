@@ -186,6 +186,7 @@ fi
 height=$(mediainfo -f --Output='Video;%Height%' ${video_file})
 width=$(mediainfo -f --Output='Video;%Width%' ${video_file})
 aspect_ratio=$(mediainfo -f --Output='Video;%DisplayAspectRatio/String%' ${video_file})
+rotation=$(mediainfo -f --Output='Video;%Rotation%' ${video_file})
 if [ ! -z "$height" ] || [ ! -z "$width" ] || [ ! -z "$aspect_ratio" ]; then
     format_out="Color:"
     cs=" "
@@ -199,6 +200,10 @@ if [ ! -z "$height" ] || [ ! -z "$width" ] || [ ! -z "$aspect_ratio" ]; then
     fi
     if [ ! -z "$aspect_ratio" ]; then
       format_out="${format_out}${cs}AspectRatio=${aspect_ratio}"
+      cs=", "
+    fi
+    if [ ! -z "$rotation" ]; then
+      format_out="${format_out}${cs}Rotation=${rotation}"
       cs=", "
     fi
     echo $format_out
