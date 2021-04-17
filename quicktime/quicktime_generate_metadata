@@ -1,9 +1,6 @@
 #!/bin/bash
 
 video_file=$1
-id=""
-meta_files=""
-processed=false
 meta_file=""
 
 error_exit() {
@@ -64,15 +61,6 @@ if [ ! -z "$gps_coord" ]; then
     GPS=$gps_coord
 fi
 
-# TODO: generate ffprope string and add it to the COMMENT variable
-COMMENT=''
-com=$(exiftool -q -q -b -keys:DisplayName ${video_file})
-if [ ! -z "$com" ]; then
-    COMMENT=$com
-fi
-
-# TODO: generate LOGCOMMENT string
-
 
 rm -f $meta_file &> /dev/null
 touch $meta_file
@@ -98,6 +86,3 @@ echo "HEADLINE=''" >> $meta_file
 echo "TITLE_SUFFIX=''" >> $meta_file
 echo "DESCRIPTION=''" >> $meta_file
 echo "COPYRIGHT='Leo Huber'" >> $meta_file
-echo "" >> $meta_file
-echo "EVENT=''" >> $meta_file
-echo "" >> $meta_file

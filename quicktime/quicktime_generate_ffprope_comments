@@ -1,10 +1,7 @@
 #!/bin/bash
 
 video_file=$1
-id=""
-meta_files=""
-processed=false
-meta_file=""
+ffprobe_file=""
 
 error_exit() {
   echo "$1" 1>&2
@@ -14,3 +11,25 @@ error_exit() {
 check_video_file_exists() {
 	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
 }
+
+# Check if the provided video file exists
+check_video_file_exists
+
+# Create ffprobe data file name
+ffprobe_file="${video_file%%.*}_ffprobe.txt"
+
+# TODO: generate ffprope string and add it to the COMMENT variable
+COMMENT=''
+com=$(exiftool -q -q -b -keys:DisplayName ${video_file})
+if [ ! -z "$com" ]; then
+    COMMENT=$com
+fi
+
+# TODO: generate LOGCOMMENT string
+
+rm -f $ffprobe_file &> /dev/null
+touch $ffprobe_file
+echo "# Generated ffprobe data file for video ${video_file}" >> $ffprobe_file
+echo "COMMENT='${COMMENT}'" >> $ffprobe_file
+echo "" >> $ffprobe_file
+echo "LOGCOMMENT=''" >> $ffprobe_file

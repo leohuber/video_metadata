@@ -24,6 +24,3 @@ echo "HEADLINE=''" >> $meta_file
 echo "TITLE_SUFFIX=''" >> $meta_file
 echo "DESCRIPTION=''" >> $meta_file
 echo "COPYRIGHT='Leo Huber'" >> $meta_file
-echo "" >> $meta_file
-echo "EVENT=''" >> $meta_file
-echo "" >> $meta_file
