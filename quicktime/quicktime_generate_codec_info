@@ -209,9 +209,9 @@ fi
 # Audio
 audio_format=$(mediainfo -f --Output='Audio;%Format%' ${video_file})
 audio_bitrate=$(mediainfo -f --Output='Audio;%BitRate/String%' ${video_file})
+audio_samplingrate=$(mediainfo -f --Output='Audio;%SamplingRate/String%' ${video_file})
 audio_channels=$(mediainfo -f --Output='Audio;%Channel(s)%' ${video_file})
 audio_channelslayout=$(mediainfo -f --Output='Audio;%ChannelLayout%' ${video_file})
-audio_samplingrate=$(mediainfo -f --Output='Audio;%SamplingRate/String%' ${video_file})
 if [ ! -z "$audio_format" ] || [ ! -z "$audio_bitrate" ] || [ ! -z "$audio_channels" ] || [ ! -z "$audio_channelslayout" ] || [ ! -z "$audio_samplingrate" ]; then
     format_out="Audio:"
     cs=" "
