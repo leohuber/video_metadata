@@ -183,7 +183,7 @@ height=$(mediainfo -f --Output='Video;%Height%' ${video_file})
 width=$(mediainfo -f --Output='Video;%Width%' ${video_file})
 aspect_ratio=$(mediainfo -f --Output='Video;%DisplayAspectRatio/String%' ${video_file})
 rotation=$(mediainfo -f --Output='Video;%Rotation%' ${video_file})
-if [ ! -z "$height" ] || [ ! -z "$width" ] || [ ! -z "$aspect_ratio" ]; then
+if [ ! -z "$height" ] || [ ! -z "$width" ] || [ ! -z "$aspect_ratio" ] || [ ! -z "$rotation" ]; then
     format_out="Dimensions:"
     cs=" "
     if [ ! -z "$height" ]; then
@@ -206,10 +206,43 @@ if [ ! -z "$height" ] || [ ! -z "$width" ] || [ ! -z "$aspect_ratio" ]; then
 ${format_out}"
 fi
 
+# Audio
+audio_format=$(mediainfo -f --Output='Audio;%Format%' ${video_file})
+audio_bitrate=$(mediainfo -f --Output='Audio;%BitRate/String%' ${video_file})
+audio_channels=$(mediainfo -f --Output='Audio;%Channel(s)%' ${video_file})
+audio_channelslayout=$(mediainfo -f --Output='Audio;%ChannelLayout%' ${video_file})
+audio_samplingrate=$(mediainfo -f --Output='Audio;%SamplingRate/String%' ${video_file})
+if [ ! -z "$audio_format" ] || [ ! -z "$audio_bitrate" ] || [ ! -z "$audio_channels" ] || [ ! -z "$audio_channelslayout" ] || [ ! -z "$audio_samplingrate" ]; then
+    format_out="Audio:"
+    cs=" "
+    if [ ! -z "$audio_format" ]; then
+      format_out="${format_out}${cs}Format=${audio_format}"
+      cs=", "
+    fi
+    if [ ! -z "$audio_bitrate" ]; then
+      format_out="${format_out}${cs}BitRate=${audio_bitrate}"
+      cs=", "
+    fi
+    if [ ! -z "$audio_samplingrate" ]; then
+      format_out="${format_out}${cs}SamplingRate=${audio_samplingrate}"
+      cs=", "
+    fi
+    if [ ! -z "$audio_channels" ]; then
+      format_out="${format_out}${cs}Channels=${audio_channels}"
+      cs=", "
+    fi
+    if [ ! -z "$audio_channelslayout" ]; then
+      format_out="${format_out}${cs}Layout=${audio_channelslayout}"
+      cs=", "
+    fi
+    COMMENT="${COMMENT}
+${format_out}"
+fi
+
 # generate COMMENT string
 
 rm -f $codec_info &> /dev/null
 touch $codec_info
-echo "# Generated ffprobe data file for video ${video_file}" >> $codec_info
+echo "# Generated mediainfo data file for video ${video_file}" >> $codec_info
 echo "" >> $codec_info
 echo "COMMENT='${COMMENT}'" >> $codec_info
