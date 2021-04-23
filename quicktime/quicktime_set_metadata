@@ -81,8 +81,11 @@ set_xmp_extension_schema_tags
 # Set XMP Tiff Namespace Tags
 set_xmp_tiff_namespace_tags
 
-# Rename meta data file
+# Rename movie data file
 mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.mov
 
-# Rename movie file
+# Rename meta file
+mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
+
+# Try to rename raw file
 mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
