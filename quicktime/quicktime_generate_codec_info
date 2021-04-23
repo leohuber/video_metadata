@@ -13,7 +13,7 @@ check_video_file_exists() {
 }
 
 # Check if video file exists
-check_file_exists $video_file
+check_video_file_exists $video_file
 
 # Create ffprobe data file name
 codec_info="${video_file%%.*}_codec.txt"
