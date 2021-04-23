@@ -13,7 +13,7 @@ check_video_file_exists() {
 }
 
 # Check if video file exists
-check_file_exists $video_file
+check_video_file_exists $video_file
 
 # Create meta data file name
 meta_file="${video_file%%.*}_meta.txt"
