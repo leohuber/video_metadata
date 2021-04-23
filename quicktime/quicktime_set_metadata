@@ -88,4 +88,10 @@ mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.mov
 mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
 
 # Try to rename raw file
-mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
+if [ -d "./zzz_mts" ]; then
+	mts_file="${video_file%%.*}.mts"
+	if [ -f "./zzz_mts/${mts_file}" ]; then
+		# rename mts file
+		mv ./zzz_mts/${mts_file} ./zzz_mts/${IDENTIFIER}_${TITLE_SUFFIX}.mts
+	fi
+fi
