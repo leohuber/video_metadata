@@ -12,8 +12,8 @@ check_video_file_exists() {
 	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
 }
 
-# Check if the provided video file exists
-check_video_file_exists
+# Check if video file exists
+check_file_exists $video_file
 
 # Create ffprobe data file name
 codec_info="${video_file%%.*}_codec.txt"
