@@ -1,9 +1,6 @@
 #!/bin/bash
 
 video_file=$1
-id=""
-meta_files=""
-processed=false
 meta_file=""
 
 error_exit() {
