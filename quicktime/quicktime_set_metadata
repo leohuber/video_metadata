@@ -16,8 +16,8 @@ set_quicktime_keys_tags() {
 
 	# Update keys tags and delete Keys:DisplayName (added by FilmicPro)
 	exiftool -overwrite_original -Keys:Make="${MAKE}" -Keys:Model="${MODEL}" -Keys:Software="${SOFTWARE}" \
-		-Keys:Description="${DESCRIPTION}" -Keys:Comment="${COMMENT}" -Keys:GPSCoordinates="${GPS}" \
-		-Keys:CreationDate="${DATE_CREATED}" -Keys:DisplayName= $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
+		-Keys:Description="${DESCRIPTION}" -Keys:GPSCoordinates="${GPS}" -Keys:CreationDate="${DATE_CREATED}" \
+		-Keys:DisplayName= $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
 
 	# When updating the field "Copyright Notice", Adobe Bridge updates both, the xmp filed "xmp:Rights" and the field "itemlist:Copyright" with the same value.
 	# Therefore ,make sure both fields are updated. The same holds for the fields "xmp:Title" / "itemlist:Title" and "xmp:LogComment" / "itemlist:Comment"
