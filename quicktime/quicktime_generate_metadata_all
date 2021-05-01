@@ -1,6 +1,8 @@
 #!/bin/bash
 
-for f in *.MOV; do mv "$f" "${f//.MOV/.mov}"; done
+if [ -e *.MOV ]; then 
+    for f in *.MOV; do mv "$f" "${f//.MOV/.mov}"; done
+fi 
 
 for movie_file in *.mov; do quicktime_generate_metadata ${movie_file}; done;
 
