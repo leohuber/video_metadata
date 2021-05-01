@@ -27,6 +27,9 @@ if [ ! -z "$datec" ]; then
     IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
     IDENTIFIER=${IDENTIFIER// /_}
     IDENTIFIER=${IDENTIFIER//:/}
+    mv $video_file ${IDENTIFIER}.mov
+    video_file=${IDENTIFIER}.mov
+    meta_file=${IDENTIFIER}_meta.txt
 else
     datec=$(exiftool -q -q -b -CreateDate ${video_file})
     if [ ! -z "$datec" ]; then
@@ -34,6 +37,9 @@ else
         IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
         IDENTIFIER=${IDENTIFIER// /_}
         IDENTIFIER=${IDENTIFIER//:/}
+        mv $video_file ${IDENTIFIER}.mov
+        video_file=${IDENTIFIER}.mov
+        meta_file=${IDENTIFIER}_meta.txt
     fi
 fi
 
