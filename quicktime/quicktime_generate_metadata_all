@@ -1,5 +1,9 @@
 #!/bin/bash
 
+for f in *.MOV; do mv "$f" "${f//.MOV/.mov}"; done
+
+exit 0
+
 for movie_file in *.mov; do quicktime_generate_metadata ${movie_file}; done;
 
 meta_file="./zzz_meta_data_template.txt"
