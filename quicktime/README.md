@@ -1,2 +1,2 @@
-# photo_video_metadata
-Scripts for managing meta data for video and photo files
+# Quicktime Scripts
+Scripts for managing meta data for quicktime container files (movies).
