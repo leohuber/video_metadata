@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$(ls -A | grep -i \\.MOV\$)" ]; then echo true; fi 
+if [ "$(ls -A | grep -i \\.MOV\$)" ]; then
     for f in *.MOV; do mv "$f" "${f//.MOV/.mov}"; done
 fi 
 
