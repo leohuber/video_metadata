@@ -21,14 +21,14 @@ meta_file="${video_file%%.*}_meta.txt"
 # Try to extract the date & create an identifier
 DATE_CREATED='2005:10:23 20:06:34.33-05:00 - DEFAULT'
 IDENTIFIER='20051023_200634 - DEFAULT'
-datec=$(exiftool -q -b -CreationDate ${video_file})
+datec=$(exiftool -q -q -b -CreationDate ${video_file})
 if [ ! -z "$datec" ]; then
     DATE_CREATED=$datec
     IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
     IDENTIFIER=${IDENTIFIER// /_}
     IDENTIFIER=${IDENTIFIER//:/}
 else
-    datec=$(exiftool -q -b -CreateDate ${video_file})
+    datec=$(exiftool -q -q -b -CreateDate ${video_file})
     if [ ! -z "$datec" ]; then
         DATE_CREATED=$datec
         IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
@@ -38,80 +38,80 @@ else
 fi
 
 SOFTWARE='Created with FiLMiC Pro6.10.910065 / iOS 14.4 - DEFAULT'
-softw=$(exiftool -q -b -Software ${video_file})
+softw=$(exiftool -q -q -b -Software ${video_file})
 if [ ! -z "$softw" ]; then
     SOFTWARE=$softw
 fi
 
 MAKE='Apple - DEFAULT'
-mak=$(exiftool -q -b -Make ${video_file})
+mak=$(exiftool -q -q -b -Make ${video_file})
 if [ ! -z "$mak" ]; then
     MAKE=$mak
 fi
 
 MODEL='iPhone 11 Pro - DEFAULT'
-mod=$(exiftool -q -b -Model ${video_file})
+mod=$(exiftool -q -q -b -Model ${video_file})
 if [ ! -z "$mod" ]; then
     MODEL=$mod
 fi
 
 GPS='-35.2975906, 149.1012676, 554 - DEFAULT'
-gps_coord=$(exiftool -q -b -GPSCoordinates ${video_file})
+gps_coord=$(exiftool -q -q -b -GPSCoordinates ${video_file})
 if [ ! -z "$gps_coord" ]; then
     gps_coord=$(echo $gps_coord | sed 's/ /, /g')
     GPS=$gps_coord
 fi
 
 COUNTRY_CODE='CHE - DEFAULT'
-cntr_code=$(exiftool -q -b -CountryCode ${video_file})
+cntr_code=$(exiftool -q -q -b -CountryCode ${video_file})
 if [ ! -z "$cntr_code" ]; then
     COUNTRY_CODE=$cntr_code
 fi
 
 COUNTRY='Switzerland - DEFAULT'
-cntr=$(exiftool -q -b -Country ${video_file})
+cntr=$(exiftool -q -q -b -Country ${video_file})
 if [ ! -z "$cntr" ]; then
     COUNTRY=$cntr
 fi
 
 STATE='ZH - DEFAULT'
-state=$(exiftool -q -b -State ${video_file})
+state=$(exiftool -q -q -b -State ${video_file})
 if [ ! -z "$state" ]; then
     STATE=$state
 fi
 
 CITY='Zurich - DEFAULT'
-city=$(exiftool -q -b -City ${video_file})
+city=$(exiftool -q -q -b -City ${video_file})
 if [ ! -z "$city" ]; then
     CITY=$city
 fi
 
 SUBLOCATION='Sublocation - DEFAULT'
-subloc=$(exiftool -q -b -Location ${video_file})
+subloc=$(exiftool -q -q -b -Location ${video_file})
 if [ ! -z "$subloc" ]; then
     SUBLOCATION=$subloc
 fi
 
 HEADLINE='Headline - DEFAULT'
-headl=$(exiftool -q -b -Headline ${video_file})
+headl=$(exiftool -q -q -b -Headline ${video_file})
 if [ ! -z "$headl" ]; then
     HEADLINE=$headl
 fi
 
 TITLE_SUFFIX='Tittle Suffix - DEFAULT'
-titles=$(exiftool -q -b -Title ${video_file})
+titles=$(exiftool -q -q -b -Title ${video_file})
 if [ ! -z "$titles" ]; then
     TITLE_SUFFIX=${titles#*_*_}
 fi
 
 DESCRIPTION='Description - DEFAULT'
-desc=$(exiftool -q -b -Description ${video_file})
+desc=$(exiftool -q -q -b -Description ${video_file})
 if [ ! -z "$desc" ]; then
     DESCRIPTION=$desc
 fi
 
 COPYRIGHT='Leo Huber - DEFAULT'
-copyr=$(exiftool -q -b -Rights ${video_file})
+copyr=$(exiftool -q -q -b -Rights ${video_file})
 if [ ! -z "$copyr" ]; then
     COPYRIGHT=$copyr
 fi
