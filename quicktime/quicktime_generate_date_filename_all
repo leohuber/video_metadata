@@ -1,0 +1,42 @@
+#!/bin/bash
+
+video_file=$1
+meta_file=""
+
+error_exit() {
+  echo "$1" 1>&2
+  exit 1
+}
+
+check_video_file_exists() {
+	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
+}
+
+# Check if video file exists
+check_video_file_exists $video_file
+
+# Create meta data file name
+meta_file="${video_file%%.*}_meta.txt"
+
+# Try to extract the date & create an identifier
+datec=$(exiftool -q -b -CreationDate ${video_file})
+if [ ! -z "$datec" ]; then
+    DATE_CREATED=$datec
+    IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+    IDENTIFIER=${IDENTIFIER// /_}
+    IDENTIFIER=${IDENTIFIER//:/}
+    mv $video_file ${IDENTIFIER}.mov
+    video_file=${IDENTIFIER}.mov
+    meta_file=${IDENTIFIER}_meta.txt
+else
+    datec=$(exiftool -q -b -CreateDate ${video_file})
+    if [ ! -z "$datec" ]; then
+        DATE_CREATED=$datec
+        IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+        IDENTIFIER=${IDENTIFIER// /_}
+        IDENTIFIER=${IDENTIFIER//:/}
+        mv $video_file ${IDENTIFIER}.mov
+        video_file=${IDENTIFIER}.mov
+        meta_file=${IDENTIFIER}_meta.txt
+    fi
+fi

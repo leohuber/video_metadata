@@ -9,3 +9,4 @@ cp quicktime_generate_metadata_all /usr/local/bin
 cp quicktime_generate_codec_info /usr/local/bin
 cp quicktime_generate_codec_info_all /usr/local/bin
 cp quicktime_cleanup_metadata_all /usr/local/bin
+cp quicktime_generate_date_filename_all /usr/local/bin
