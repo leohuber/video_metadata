@@ -41,8 +41,11 @@ set_xmp_core_schema_tags() {
 }
 
 set_xmp_extension_schema_tags() {
-	exiftool -overwrite_original -xmp:LocationShownCountryCode="${COUNTRY_CODE}" -xmp:LocationShownCountryName="${COUNTRY}" -xmp:LocationShownProvinceState="${STATE}" \
-	-xmp:LocationShownCity="${CITY}" -xmp:LocationShownSublocation="${SUBLOCATION}" \
+	exiftool -overwrite_original -xmp:LocationShownCountryCode="${COUNTRY_CODE}" -xmp:LocationCreatedCountryCode="${COUNTRY_CODE}"  \
+	-xmp:LocationShownCountryName="${COUNTRY}" -xmp:LocationCreatedCountryName="${COUNTRY}" \
+	-xmp:LocationShownProvinceState="${STATE}" -xmp:LocationCreatedProvinceState="${STATE}" \
+	-xmp:LocationShownCity="${CITY}" -xmp:LocationCreatedCity="${CITY}" \
+	-xmp:LocationShownSublocation="${SUBLOCATION}" -xmp:LocationCreatedSublocation="${SUBLOCATION}" \
 	-xmp:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture" \
 	$video_file &> /dev/null || error_exit "Could not update xmp extension schema tags"
 }
