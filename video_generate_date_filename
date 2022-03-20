@@ -1,0 +1,73 @@
+#!/bin/bash
+
+error_exit() {
+  echo "$1" 1>&2
+  exit 1
+}
+
+check_video_file_exists() {
+	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
+}
+
+generate_date_filename(){
+    
+    # Try to extract the date & create an identifier
+
+    # TODO: check if file ending is one of mts,mp4,mov and return if not
+
+    # video file
+    video_file=$1
+    extension="${video_file##*.}"
+    extension="$(tr [A-Z] [a-z] <<< "$extension")"
+    model=$(exiftool -s3 -Model ${video_file})
+
+    # Check if video file exists
+    check_video_file_exists $video_file
+
+    # check if we are processing a quicktime container
+    if [ "$extension" = "mov" ]; then
+        echo "mov"
+        # The QuickTime:CreationDate (sic) field you are looking at in Exiftool is a non-standard field that Apple adds to iPhone videos.
+        # It records the capture date in local time with a time zone. As far as I know, only iPhones add this field.
+        datec=$(exiftool -s3 -CreationDate ${video_file})
+        if [ ! -z "$datec" ]; then
+            DATE_CREATED=$datec
+            IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+            IDENTIFIER=${IDENTIFIER// /_}
+            IDENTIFIER=${IDENTIFIER//:/}
+            mv $video_file ${IDENTIFIER}.mov
+        else
+            # The tag CreateDate is available in mov files (for instance the files created with Filmic Pro on Iphone)
+            # It contains the local time without time offset
+            # You can check availability of the tag with "exiftool -s1 -G1 <video_file>"
+            datec=$(exiftool -s3 -CreateDate ${video_file})
+            echo $video_file
+            if [ ! -z "$datec" ]; then
+                DATE_CREATED=$datec
+                IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+                IDENTIFIER=${IDENTIFIER// /_}
+                IDENTIFIER=${IDENTIFIER//:/}
+                mv $video_file ${IDENTIFIER}.mov
+            fi
+        fi
+    fi
+
+    # Check if we are processing a mp4 container
+    if [ "$extension" = "mp4" ]; then
+        # Canon EOS R6
+        if [ "$model" = "Canon EOS R6" ]; then
+            echo "Canon EOS R6"
+        fi
+    fi
+
+    # Check if we are processing a mts container
+    if [ "$extension" = "mts" ]; then
+        echo "mts"
+    fi
+
+}
+
+for movie_file in "$@"
+do
+    generate_date_filename ${movie_file};
+done

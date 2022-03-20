@@ -12,18 +12,18 @@ check_file_exists() {
 	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
 }
 
-set_quicktime_keys_tags() {
+#set_quicktime_keys_tags() {
 
 	# Update keys tags and delete Keys:DisplayName (added by FilmicPro)
-	exiftool -overwrite_original -Keys:Make="${MAKE}" -Keys:Model="${MODEL}" -Keys:Software="${SOFTWARE}" \
-		-Keys:Description="${DESCRIPTION}" -Keys:GPSCoordinates="${GPS}" -Keys:CreationDate="${DATE_CREATED}" \
-		-Keys:DisplayName= $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
+#	exiftool -overwrite_original -Keys:Make="${MAKE}" -Keys:Model="${MODEL}" -Keys:Software="${SOFTWARE}" \
+#		-Keys:Description="${DESCRIPTION}" -Keys:GPSCoordinates="${GPS}" -Keys:CreationDate="${DATE_CREATED}" \
+#		-Keys:DisplayName= $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
 
 	# When updating the field "Copyright Notice", Adobe Bridge updates both, the xmp filed "xmp:Rights" and the field "itemlist:Copyright" with the same value.
 	# Therefore ,make sure both fields are updated. The same holds for the fields "xmp:Title" / "itemlist:Title" and "xmp:LogComment" / "itemlist:Comment"
-	exiftool -overwrite_original -itemlist:Copyright="${COPYRIGHT}" -itemlist:Title="${IDENTIFIER}_${TITLE_SUFFIX}" \
-		$video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
-}
+#	exiftool -overwrite_original -itemlist:Copyright="${COPYRIGHT}" -itemlist:Title="${IDENTIFIER}_${TITLE_SUFFIX}" \
+#		$video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
+#}
 
 set_xmp_dm_tags() {
 	exiftool -if "defined($SourceImageHeight)" -overwrite_original "-xmp:VideoFrameSizeH<SourceImageHeight" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeH"
@@ -48,6 +48,11 @@ set_xmp_extension_schema_tags() {
 	-xmp:LocationShownSublocation="${SUBLOCATION}" -xmp:LocationCreatedSublocation="${SUBLOCATION}" \
 	-xmp:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture" \
 	$video_file &> /dev/null || error_exit "Could not update xmp extension schema tags"
+}
+
+set_xmp_exif_namespace_tags() {
+	#https://stackoverflow.com/questions/41849691/how-to-add-gps-latitude-and-longitude-using-exiftool-in-mac-how-to-edit-meta-da
+	
 }
 
 set_xmp_tiff_namespace_tags() {
