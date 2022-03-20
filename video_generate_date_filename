@@ -26,7 +26,6 @@ generate_date_filename(){
 
     # check if we are processing a quicktime container
     if [ "$extension" = "mov" ]; then
-        echo "mov"
         # The QuickTime:CreationDate (sic) field you are looking at in Exiftool is a non-standard field that Apple adds to iPhone videos.
         # It records the capture date in local time with a time zone. As far as I know, only iPhones add this field.
         datec=$(exiftool -s3 -CreationDate ${video_file})
@@ -41,7 +40,6 @@ generate_date_filename(){
             # It contains the local time without time offset
             # You can check availability of the tag with "exiftool -s1 -G1 <video_file>"
             datec=$(exiftool -s3 -CreateDate ${video_file})
-            echo $video_file
             if [ ! -z "$datec" ]; then
                 DATE_CREATED=$datec
                 IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
