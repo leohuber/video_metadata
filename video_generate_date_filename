@@ -13,13 +13,13 @@ generate_date_filename(){
     
     # Try to extract the date & create an identifier
 
-    # TODO: check if file ending is one of mts,mp4,mov and return if not
-
     # video file
     video_file=$1
     extension="${video_file##*.}"
     extension="$(tr [A-Z] [a-z] <<< "$extension")"
     model=$(exiftool -s3 -Model ${video_file})
+
+    # TODO: check if file ending is one of mts,mp4,mov and return if not
 
     # Check if video file exists
     check_video_file_exists $video_file
@@ -52,7 +52,7 @@ generate_date_filename(){
         fi
     fi
 
-    # Check if we are processing a mp4 container
+    # Check if we are processing an mp4 container
     if [ "$extension" = "mp4" ]; then
         # Canon EOS R6
         if [ "$model" = "Canon EOS R6" ]; then
@@ -60,7 +60,7 @@ generate_date_filename(){
         fi
     fi
 
-    # Check if we are processing a mts container
+    # Check if we are processing an mts container
     if [ "$extension" = "mts" ]; then
         echo "mts"
     fi
