@@ -19,8 +19,6 @@ generate_date_filename(){
     extension="$(tr [A-Z] [a-z] <<< "$extension")"
     model=$(exiftool -s3 -Model ${video_file})
 
-    # TODO: check if file ending is one of mts,mp4,mov and return if not
-
     # Check if video file exists
     check_video_file_exists $video_file
 
