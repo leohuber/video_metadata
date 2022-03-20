@@ -38,6 +38,6 @@ generate_date_filename(){
     fi
 }
 
-for movie_file in *.mov; do
-    generate_date_filename ${movie_file};
-done;
+#!/bin/bash
+
+for movie_file in *.mov *.mp4 *.MOV *.MP4 *.mts *.MTS; do generate_date_filename ${movie_file}; done 2> /dev/null;
