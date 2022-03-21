@@ -1,14 +1,5 @@
 #!/bin/bash
 
-error_exit() {
-  echo "$1" 1>&2
-  exit 1
-}
-
-check_video_file_exists() {
-	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
-}
-
 generate_date_filename(){
     
     # Try to extract the date & create an identifier
@@ -18,9 +9,6 @@ generate_date_filename(){
     extension="${video_file##*.}"
     extension="$(tr [A-Z] [a-z] <<< "$extension")"
     model=$(exiftool -s3 -Model ${video_file})
-
-    # Check if video file exists
-    check_video_file_exists $video_file
 
     # check if we are processing a quicktime container
     if [ "$extension" = "mov" ]; then
