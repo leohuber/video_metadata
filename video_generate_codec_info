@@ -238,8 +238,6 @@ generate_codec_info(){
 
 }
 
-
-
 for movie_file in "$@"
 do
     generate_codec_info ${movie_file};
