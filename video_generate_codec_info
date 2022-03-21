@@ -42,6 +42,14 @@ generate_codec_info(){
       COMMENT=${format_out}
   fi
 
+  # HDR Format
+  hdr_format=$(mediainfo -f --Output='Video;%HDR_Format/String%' ${video_file})
+  if [ ! -z "$hdr_format" ]; then
+      format_out="HDR Format: $hdr_format"
+      COMMENT="${COMMENT}
+  ${format_out}"
+  fi
+
   # Pixel Format
   colorspace=$(mediainfo -f --Output='Video;%ColorSpace%' ${video_file})
   chroma_subsampling=$(mediainfo -f --Output='Video;%ChromaSubsampling/String%' ${video_file})
