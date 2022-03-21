@@ -1,3 +1,0 @@
-#!/bin/bash
-
-for movie_file in *.mov; do quicktime_set_codec_info ${movie_file}; done;
