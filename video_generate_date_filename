@@ -36,7 +36,6 @@ generate_date_filename(){
         else
             # The tag CreateDate is available in mov files (for instance the files created with Filmic Pro on Iphone)
             # It contains the local time without time offset
-            # You can check availability of the tag with "exiftool -s1 -G1 <video_file>"
             datec=$(exiftool -s3 -CreateDate ${video_file})
             if [ ! -z "$datec" ]; then
                 DATE_CREATED=$datec
@@ -50,15 +49,34 @@ generate_date_filename(){
 
     # Check if we are processing an mp4 container
     if [ "$extension" = "mp4" ]; then
-        # Canon EOS R6
         if [ "$model" = "Canon EOS R6" ]; then
-            echo "Canon EOS R6"
+            # The tag CreateDate is available in MP4 files (at least in the canon R6)
+            # It contains the local time without time offset
+            datec=$(exiftool -s3 -CreateDate ${video_file})
+            if [ ! -z "$datec" ]; then
+                DATE_CREATED=$datec
+                IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+                IDENTIFIER=${IDENTIFIER// /_}
+                IDENTIFIER=${IDENTIFIER//:/}
+                mv $video_file ${IDENTIFIER}.mp4
+            fi
         fi
     fi
 
     # Check if we are processing an mts container
     if [ "$extension" = "mts" ]; then
-        echo "mts"
+        if [ "$model" = "ILCE-7" ] || [ "$model" = "HDR-CX550VE" ]; then
+            # The tag DateTimeOriginal is available in mts files (at least in the sony cameras (ILCE-7, HDR-CX550VE)
+            # It contains the local time with time offset
+            datec=$(exiftool -s3 -DateTimeOriginal ${video_file})
+            if [ ! -z "$datec" ]; then
+                DATE_CREATED=$datec
+                IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+                IDENTIFIER=${IDENTIFIER// /_}
+                IDENTIFIER=${IDENTIFIER//:/}
+                mv $video_file ${IDENTIFIER}.mts
+            fi
+        fi
     fi
 
 }
