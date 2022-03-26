@@ -85,7 +85,7 @@ set_meta_info(){
 		set_gps_coordinates
 
 		# Rename movie data file
-		mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.$extension
+		mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.${extension}
 
 		# Rename meta file
 		mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
