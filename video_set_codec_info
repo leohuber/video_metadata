@@ -20,7 +20,7 @@ set_codec_info(){
 
   extension="${video_file##*.}"
   extension="$(tr [A-Z] [a-z] <<< "$extension")"
-  model=$(exiftool -s3 -Model ${video_file})
+  model=$(exiftool -q -q -b -api largefilesupport=1 -Model ${video_file})
 
   # Create meta data file name
   meta_file="${video_file%%.*}_codec.txt"
@@ -37,7 +37,7 @@ set_codec_info(){
     # Therefore ,make sure both fields are updated. The same holds for the fields "xmp:Title" / "itemlist:Title" and "xmp:LogComment" / "itemlist:Comment"
     #exiftool -overwrite_original -itemlist:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
 
-    exiftool -overwrite_original -xmp:LogComment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update tag xmp:LogComment"
+    exiftool -api largefilesupport=1 -overwrite_original -xmp:LogComment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update tag xmp:LogComment"
   fi
 
 }

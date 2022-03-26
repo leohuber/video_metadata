@@ -10,26 +10,26 @@ check_file_exists() {
 }
 
 set_gps_coordinates() {
-	exiftool -overwrite_original -GPSCoordinates="${GPS}" $video_file &> /dev/null || error_exit "Could not update gps coordinates"
+	exiftool -api largefilesupport=1 -overwrite_original -GPSCoordinates="${GPS}" $video_file &> /dev/null || error_exit "Could not update gps coordinates"
 }
 
 set_xmp_dm_tags() {
-	exiftool -if "defined($SourceImageHeight)" -overwrite_original "-xmp:VideoFrameSizeH<SourceImageHeight" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeH"
-	exiftool -if "defined($SourceImageWidth)" -overwrite_original "-xmp:VideoFrameSizeW<SourceImageWidth" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeW"
-	exiftool -if "defined($VideoFrameRate)" -overwrite_original "-xmp:VideoFrameRate<VideoFrameRate" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameRate"
-	exiftool -if "defined($CompressorName)" -overwrite_original "-xmp:VideoCompressor<CompressorName" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoCompressorName"
-	exiftool -overwrite_original -xmp:VideoFrameSizeUnit="pixels" -xmp:ShotDate="${DATE_CREATED}" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeUnit or xmp:ShotDate"
+	exiftool -if "defined($SourceImageHeight)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeH<SourceImageHeight" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeH"
+	exiftool -if "defined($SourceImageWidth)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeW<SourceImageWidth" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeW"
+	exiftool -if "defined($VideoFrameRate)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameRate<VideoFrameRate" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameRate"
+	exiftool -if "defined($CompressorName)" -api largefilesupport=1 -overwrite_original "-xmp:VideoCompressor<CompressorName" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoCompressorName"
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:VideoFrameSizeUnit="pixels" -xmp:ShotDate="${DATE_CREATED}" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeUnit or xmp:ShotDate"
 }
 
 set_xmp_core_schema_tags() {
-	exiftool -overwrite_original -xmp:CountryCode="${COUNTRY_CODE}" -xmp:Country="${COUNTRY}" -xmp:State="${STATE}" -xmp:City="${CITY}" \
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:CountryCode="${COUNTRY_CODE}" -xmp:Country="${COUNTRY}" -xmp:State="${STATE}" -xmp:City="${CITY}" \
 	-xmp:Location="${SUBLOCATION}" -xmp:Title="${IDENTIFIER}_${TITLE_SUFFIX}" -xmp:Headline="${HEADLINE}" -xmp:Description="${DESCRIPTION}" \
 	-xmp:DateCreated="${DATE_CREATED}" -xmp:Marked="True" -xmp:Rights="${COPYRIGHT}" \
 	$video_file &> /dev/null || error_exit "Could not update xmp core schema tags"
 }
 
 set_xmp_extension_schema_tags() {
-	exiftool -overwrite_original -xmp:LocationShownCountryCode="${COUNTRY_CODE}" -xmp:LocationCreatedCountryCode="${COUNTRY_CODE}"  \
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:LocationShownCountryCode="${COUNTRY_CODE}" -xmp:LocationCreatedCountryCode="${COUNTRY_CODE}"  \
 	-xmp:LocationShownCountryName="${COUNTRY}" -xmp:LocationCreatedCountryName="${COUNTRY}" \
 	-xmp:LocationShownProvinceState="${STATE}" -xmp:LocationCreatedProvinceState="${STATE}" \
 	-xmp:LocationShownCity="${CITY}" -xmp:LocationCreatedCity="${CITY}" \
@@ -38,13 +38,8 @@ set_xmp_extension_schema_tags() {
 	$video_file &> /dev/null || error_exit "Could not update xmp extension schema tags"
 }
 
-set_xmp_exif_namespace_tags() {
-	# https://stackoverflow.com/questions/41849691/how-to-add-gps-latitude-and-longitude-using-exiftool-in-mac-how-to-edit-meta-da
-	echo ""
-}
-
 set_xmp_tiff_namespace_tags() {
-	exiftool -overwrite_original -xmp:Model="${MODEL}" -xmp:Make="${MAKE}" -xmp:ImageDescription="${DESCRIPTION}" $video_file &> /dev/null || error_exit "Could not update xmp tiff namespace tags"
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:Model="${MODEL}" -xmp:Make="${MAKE}" -xmp:ImageDescription="${DESCRIPTION}" $video_file &> /dev/null || error_exit "Could not update xmp tiff namespace tags"
 }
 
 
@@ -85,7 +80,8 @@ set_meta_info(){
 
 		# Set XMP Tiff Namespace Tags
 		set_xmp_tiff_namespace_tags
-
+		
+		# Set GPS coordinates
 		set_gps_coordinates
 
 		# Rename movie data file
