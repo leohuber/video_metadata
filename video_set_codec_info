@@ -14,6 +14,10 @@ set_codec_info(){
 
   video_file=$1
   meta_file=""
+
+  # Check if video file exists
+	check_file_exists $video_file
+
   extension="${video_file##*.}"
   extension="$(tr [A-Z] [a-z] <<< "$extension")"
   model=$(exiftool -s3 -Model ${video_file})
@@ -25,16 +29,16 @@ set_codec_info(){
   check_file_exists $meta_file
   source $meta_file
 
-  # check if we are processing a quicktime container
-  if [ "$extension" = "mov" ]; then
-    exiftool -overwrite_original -Keys:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
+  # check if we are processing a quicktime or MP4 container
+  if [ "$extension" = "mov" ] || [ "$extension" = "mp4" ] ; then
+    #  exiftool -overwrite_original -Keys:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
 
     # When updating the field "Copyright Notice", Adobe Bridge updates both, the xmp filed "xmp:Rights" and the field "itemlist:Copyright" with the same value.
     # Therefore ,make sure both fields are updated. The same holds for the fields "xmp:Title" / "itemlist:Title" and "xmp:LogComment" / "itemlist:Comment"
-    exiftool -overwrite_original -itemlist:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
-  fi
+    #exiftool -overwrite_original -itemlist:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
 
-  exiftool -overwrite_original -xmp:LogComment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update tag xmp:LogComment"
+    exiftool -overwrite_original -xmp:LogComment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update tag xmp:LogComment"
+  fi
 
 }
 

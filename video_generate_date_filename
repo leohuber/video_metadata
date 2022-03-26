@@ -1,11 +1,24 @@
 #!/bin/bash
 
+error_exit() {
+  echo "$1" 1>&2
+  exit 1
+}
+
+check_file_exists() {
+	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
+}
+
 generate_date_filename(){
     
     # Try to extract the date & create an identifier
 
     # video file
     video_file=$1
+
+    # Check if video file exists
+	check_file_exists $video_file
+
     extension="${video_file##*.}"
     extension="$(tr [A-Z] [a-z] <<< "$extension")"
     model=$(exiftool -s3 -Model ${video_file})

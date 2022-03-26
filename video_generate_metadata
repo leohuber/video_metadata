@@ -1,9 +1,26 @@
 #!/bin/bash
 
+
+error_exit() {
+  echo "$1" 1>&2
+  exit 1
+}
+
+check_file_exists() {
+	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
+}
+
 generate_metadata(){
 
     video_file=$1
     meta_file=""
+
+    # Check if video file exists
+	check_file_exists $video_file
+
+    extension="${video_file##*.}"
+    extension="$(tr [A-Z] [a-z] <<< "$extension")"
+    model=$(exiftool -s3 -Model ${video_file})
 
     # Create meta data file name
     meta_file="${video_file%%.*}_meta.txt"
@@ -11,26 +28,43 @@ generate_metadata(){
     # Try to extract the date & create an identifier
     DATE_CREATED='2005:10:23 20:06:34.33-05:00 - DEFAULT'
     IDENTIFIER='20051023_200634 - DEFAULT'
-    datec=$(exiftool -q -q -b -CreationDate ${video_file})
-    if [ ! -z "$datec" ]; then
-        DATE_CREATED=$datec
-        IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
-        IDENTIFIER=${IDENTIFIER// /_}
-        IDENTIFIER=${IDENTIFIER//:/}
-    else
-        datec=$(exiftool -q -q -b -CreateDate ${video_file})
+
+     # check if we are processing a quicktime container
+    if [ "$extension" = "mov" ]; then
+        # The QuickTime:CreationDate (sic) field you are looking at in Exiftool is a non-standard field that Apple adds to iPhone videos.
+        # It records the capture date in local time with a time zone. As far as I know, only iPhones add this field.
+        datec=$(exiftool -s3 -CreationDate ${video_file})
         if [ ! -z "$datec" ]; then
             DATE_CREATED=$datec
             IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
             IDENTIFIER=${IDENTIFIER// /_}
             IDENTIFIER=${IDENTIFIER//:/}
+        else
+            # The tag CreateDate is available in mov files (for instance the files created with Filmic Pro on Iphone)
+            # It contains the local time without time offset
+            datec=$(exiftool -s3 -CreateDate ${video_file})
+            if [ ! -z "$datec" ]; then
+                DATE_CREATED=$datec
+                IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+                IDENTIFIER=${IDENTIFIER// /_}
+                IDENTIFIER=${IDENTIFIER//:/}
+            fi
         fi
     fi
 
-    SOFTWARE='Created with FiLMiC Pro6.10.910065 / iOS 14.4 - DEFAULT'
-    softw=$(exiftool -q -q -b -Software ${video_file})
-    if [ ! -z "$softw" ]; then
-        SOFTWARE=$softw
+    # Check if we are processing an mp4 container
+    if [ "$extension" = "mp4" ]; then
+        if [ "$model" = "Canon EOS R6" ]; then
+            # The tag SubSecCreateDate is available in Canon R6 files
+            # It contains the local time without time offset
+            datec=$(exiftool -s3 -SubSecCreateDate ${video_file})
+            if [ ! -z "$datec" ]; then
+                DATE_CREATED=$datec
+                IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+                IDENTIFIER=${IDENTIFIER// /_}
+                IDENTIFIER=${IDENTIFIER//:/}
+            fi
+        fi
     fi
 
     MAKE='Apple - DEFAULT'
@@ -116,7 +150,6 @@ generate_metadata(){
     echo "" >> $meta_file
     echo "MAKE='${MAKE}'" >> $meta_file
     echo "MODEL='${MODEL}'" >> $meta_file
-    echo "SOFTWARE='${SOFTWARE}'" >> $meta_file
     echo "GPS='${GPS}'" >> $meta_file
     echo "" >> $meta_file
     echo "COUNTRY_CODE='${COUNTRY_CODE}'" >> $meta_file

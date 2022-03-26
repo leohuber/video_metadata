@@ -1,8 +1,5 @@
 #!/bin/bash
 
-video_file=$1
-meta_file=""
-
 error_exit() {
   echo "$1" 1>&2
   exit 1
@@ -11,19 +8,6 @@ error_exit() {
 check_file_exists() {
 	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
 }
-
-#set_quicktime_keys_tags() {
-
-	# Update keys tags and delete Keys:DisplayName (added by FilmicPro)
-#	exiftool -overwrite_original -Keys:Make="${MAKE}" -Keys:Model="${MODEL}" -Keys:Software="${SOFTWARE}" \
-#		-Keys:Description="${DESCRIPTION}" -Keys:GPSCoordinates="${GPS}" -Keys:CreationDate="${DATE_CREATED}" \
-#		-Keys:DisplayName= $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
-
-	# When updating the field "Copyright Notice", Adobe Bridge updates both, the xmp filed "xmp:Rights" and the field "itemlist:Copyright" with the same value.
-	# Therefore ,make sure both fields are updated. The same holds for the fields "xmp:Title" / "itemlist:Title" and "xmp:LogComment" / "itemlist:Comment"
-#	exiftool -overwrite_original -itemlist:Copyright="${COPYRIGHT}" -itemlist:Title="${IDENTIFIER}_${TITLE_SUFFIX}" \
-#		$video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
-#}
 
 set_xmp_dm_tags() {
 	exiftool -if "defined($SourceImageHeight)" -overwrite_original "-xmp:VideoFrameSizeH<SourceImageHeight" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeH"
@@ -51,46 +35,64 @@ set_xmp_extension_schema_tags() {
 }
 
 set_xmp_exif_namespace_tags() {
-	#https://stackoverflow.com/questions/41849691/how-to-add-gps-latitude-and-longitude-using-exiftool-in-mac-how-to-edit-meta-da
-	
+	# https://stackoverflow.com/questions/41849691/how-to-add-gps-latitude-and-longitude-using-exiftool-in-mac-how-to-edit-meta-da
+	echo ""
 }
 
 set_xmp_tiff_namespace_tags() {
 	exiftool -overwrite_original -xmp:Model="${MODEL}" -xmp:Make="${MAKE}" -xmp:ImageDescription="${DESCRIPTION}" $video_file &> /dev/null || error_exit "Could not update xmp tiff namespace tags"
 }
 
-# Check if video file exists
-check_file_exists $video_file
 
-# Create meta data file name
-meta_file="${video_file%%.*}_meta.txt"
+set_meta_info(){
 
-# Check if meta file exists and load variables
-check_file_exists $meta_file
-source $meta_file
+	video_file=$1
+	meta_file=""
 
-# Load template file if it exists
-if test -f "./zzz_meta_data_template.txt"; then
-    source "./zzz_meta_data_template.txt"
-fi
+	# Check if video file exists
+	check_file_exists $video_file
 
-# Set XMP Dynamic Media Tags
-set_xmp_dm_tags
+	extension="${video_file##*.}"
+	extension="$(tr [A-Z] [a-z] <<< "$extension")"
 
-# Set Quicktime Keys Tags
-set_quicktime_keys_tags
+	# check if we are processing a quicktime or MP4 container
+	if [ "$extension" = "mov" ] || [ "$extension" = "mp4" ] ; then
 
-# Set XMP Core Schema Tags
-set_xmp_core_schema_tags
+		# Create meta data file name
+		meta_file="${video_file%%.*}_meta.txt"
 
-# Set XMP Extension Schema Tags
-set_xmp_extension_schema_tags
+		# Check if meta file exists and load variables
+		check_file_exists $meta_file
+		source $meta_file
 
-# Set XMP Tiff Namespace Tags
-set_xmp_tiff_namespace_tags
+		# Load template file if it exists
+		if test -f "./zzz_meta_data_template.txt"; then
+			source "./zzz_meta_data_template.txt"
+		fi
 
-# Rename movie data file
-mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.mov
+		# Set XMP Dynamic Media Tags
+		set_xmp_dm_tags
 
-# Rename meta file
-mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
+		# Set XMP Core Schema Tags
+		set_xmp_core_schema_tags
+
+		# Set XMP Extension Schema Tags
+		set_xmp_extension_schema_tags
+
+		# Set XMP Tiff Namespace Tags
+		set_xmp_tiff_namespace_tags
+
+		# Rename movie data file
+		mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.mov
+
+		# Rename meta file
+		mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
+
+	fi
+
+}
+
+for movie_file in "$@"
+do
+    set_meta_info ${movie_file};
+done
