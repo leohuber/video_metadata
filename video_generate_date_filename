@@ -21,13 +21,13 @@ generate_date_filename(){
 
     extension="${video_file##*.}"
     extension="$(tr [A-Z] [a-z] <<< "$extension")"
-    model=$(exiftool -s3 -Model ${video_file})
+    model=$(exiftool -q -q -b -api largefilesupport=1 -Model ${video_file})
 
     # check if we are processing a quicktime container
     if [ "$extension" = "mov" ]; then
         # The QuickTime:CreationDate (sic) field you are looking at in Exiftool is a non-standard field that Apple adds to iPhone videos.
         # It records the capture date in local time with a time zone. As far as I know, only iPhones add this field.
-        datec=$(exiftool -s3 -CreationDate ${video_file})
+        datec=$(exiftool -q -q -b -api largefilesupport=1 -CreationDate ${video_file})
         if [ ! -z "$datec" ]; then
             DATE_CREATED=$datec
             IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
@@ -37,7 +37,7 @@ generate_date_filename(){
         else
             # The tag CreateDate is available in mov files (for instance the files created with Filmic Pro on Iphone)
             # It contains the local time without time offset
-            datec=$(exiftool -s3 -CreateDate ${video_file})
+            datec=$(exiftool -q -q -b -api largefilesupport=1 -CreateDate ${video_file})
             if [ ! -z "$datec" ]; then
                 DATE_CREATED=$datec
                 IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
@@ -53,7 +53,7 @@ generate_date_filename(){
         if [ "$model" = "Canon EOS R6" ]; then
             # The tag CreateDate is available in MP4 files (at least in the canon R6)
             # It contains the local time without time offset
-            datec=$(exiftool -s3 -CreateDate ${video_file})
+            datec=$(exiftool -q -q -b -api largefilesupport=1 -CreateDate ${video_file})
             if [ ! -z "$datec" ]; then
                 DATE_CREATED=$datec
                 IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
@@ -69,7 +69,7 @@ generate_date_filename(){
         if [ "$model" = "ILCE-7" ] || [ "$model" = "HDR-CX550VE" ]; then
             # The tag DateTimeOriginal is available in mts files (at least in the sony cameras (ILCE-7, HDR-CX550VE)
             # It contains the local time with time offset
-            datec=$(exiftool -s3 -DateTimeOriginal ${video_file})
+            datec=$(exiftool -q -q -b -api largefilesupport=1 -DateTimeOriginal ${video_file})
             if [ ! -z "$datec" ]; then
                 DATE_CREATED=$datec
                 IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
