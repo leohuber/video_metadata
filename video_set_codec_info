@@ -1,7 +1,5 @@
 #!/bin/bash
 
-video_file=$1
-meta_file=""
 
 error_exit() {
   echo "$1" 1>&2
@@ -9,23 +7,38 @@ error_exit() {
 }
 
 check_file_exists() {
-	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
+  ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
 }
 
-# Check if video file exists
-check_file_exists $video_file
+set_codec_info(){
 
-# Create meta data file name
-meta_file="${video_file%%.*}_codec.txt"
+  video_file=$1
+  meta_file=""
+  extension="${video_file##*.}"
+  extension="$(tr [A-Z] [a-z] <<< "$extension")"
+  model=$(exiftool -s3 -Model ${video_file})
 
-# Check if meta file exists and load variables
-check_file_exists $meta_file
-source $meta_file
+  # Create meta data file name
+  meta_file="${video_file%%.*}_codec.txt"
 
-exiftool -overwrite_original -Keys:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
+  # Check if meta file exists and load variables
+  check_file_exists $meta_file
+  source $meta_file
 
-# When updating the field "Copyright Notice", Adobe Bridge updates both, the xmp filed "xmp:Rights" and the field "itemlist:Copyright" with the same value.
-# Therefore ,make sure both fields are updated. The same holds for the fields "xmp:Title" / "itemlist:Title" and "xmp:LogComment" / "itemlist:Comment"
-exiftool -overwrite_original -itemlist:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
+  # check if we are processing a quicktime container
+  if [ "$extension" = "mov" ]; then
+    exiftool -overwrite_original -Keys:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
 
-exiftool -overwrite_original -xmp:LogComment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update tag xmp:LogComment"
+    # When updating the field "Copyright Notice", Adobe Bridge updates both, the xmp filed "xmp:Rights" and the field "itemlist:Copyright" with the same value.
+    # Therefore ,make sure both fields are updated. The same holds for the fields "xmp:Title" / "itemlist:Title" and "xmp:LogComment" / "itemlist:Comment"
+    exiftool -overwrite_original -itemlist:Comment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update quicktime keys tags"
+  fi
+
+  exiftool -overwrite_original -xmp:LogComment="${COMMENT}" $video_file &> /dev/null || error_exit "Could not update tag xmp:LogComment"
+
+}
+
+for movie_file in "$@"
+do
+    set_codec_info ${movie_file};
+done
