@@ -122,7 +122,7 @@ generate_metadata(){
         HEADLINE=$headl
     fi
 
-    TITLE_SUFFIX='Tittle Suffix - DEFAULT'
+    TITLE_SUFFIX='Title Suffix - DEFAULT'
     titles=$(exiftool -q -q -b -Title ${video_file})
     if [ ! -z "$titles" ]; then
         TITLE_SUFFIX=${titles#*_*_}

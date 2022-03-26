@@ -1,0 +1,22 @@
+#!/bin/bash
+
+meta_file="zzz_meta_data_template.txt"
+
+rm -f $meta_file &> /dev/null
+touch $meta_file
+echo "# Generated meta data template file" >> $meta_file
+echo "" >> $meta_file
+echo "MAKE='Canon - DEFAULT'" >> $meta_file
+echo "MODEL='Canon EOS R6 - DEFAULT'" >> $meta_file
+echo "GPS='-35.2975906, 149.1012676, 554 - DEFAULT'" >> $meta_file
+echo "" >> $meta_file
+echo "COUNTRY_CODE='CHE - DEFAULT'" >> $meta_file
+echo "COUNTRY='Switzerland - DEFAULT'" >> $meta_file
+echo "STATE='ZH - DEFAULT'" >> $meta_file
+echo "CITY='Zurich - DEFAULT'" >> $meta_file
+echo "SUBLOCATION='Sublocation - DEFAULT'" >> $meta_file
+echo "" >> $meta_file
+echo "HEADLINE='Headline - DEFAULT'" >> $meta_file
+echo "TITLE_SUFFIX='Title Suffix - DEFAULT'" >> $meta_file
+echo "DESCRIPTION='Description - DEFAULT'" >> $meta_file
+echo "COPYRIGHT='Leo Huber - DEFAULT'" >> $meta_file
