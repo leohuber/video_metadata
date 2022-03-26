@@ -85,9 +85,11 @@ set_meta_info(){
 		set_gps_coordinates
 
 		# Rename movie data file
+		# Todo: Check if file name is the same and skip rename, otherwise there is an error
 		mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.${extension}
 
 		# Rename meta file
+		# Todo: Check if file name is the same and skip rename, otherwise there is an error
 		mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
 
 	fi
