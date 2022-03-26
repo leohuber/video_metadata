@@ -9,6 +9,10 @@ check_file_exists() {
 	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
 }
 
+set_gps_coordinates() {
+	exiftool -overwrite_original -GPSCoordinates="${GPS}" $video_file &> /dev/null || error_exit "Could not update gps coordinates"
+}
+
 set_xmp_dm_tags() {
 	exiftool -if "defined($SourceImageHeight)" -overwrite_original "-xmp:VideoFrameSizeH<SourceImageHeight" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeH"
 	exiftool -if "defined($SourceImageWidth)" -overwrite_original "-xmp:VideoFrameSizeW<SourceImageWidth" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeW"
@@ -81,6 +85,8 @@ set_meta_info(){
 
 		# Set XMP Tiff Namespace Tags
 		set_xmp_tiff_namespace_tags
+
+		set_gps_coordinates
 
 		# Rename movie data file
 		mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.mov
