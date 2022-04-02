@@ -98,7 +98,7 @@ generate_metadata(){
         COUNTRY=$cntr
     fi
 
-    STATE='ZH - DEFAULT'
+    STATE='Zurich - DEFAULT'
     state=$(exiftool -q -q -b -api largefilesupport=1 -State ${video_file})
     if [ ! -z "$state" ]; then
         STATE=$state
