@@ -98,6 +98,12 @@ generate_metadata(){
         COUNTRY=$cntr
     fi
 
+    CREATOR='Leo Huber - DEFAULT'
+    creatr=$(exiftool -q -q -b -api largefilesupport=1 -Creator ${video_file})
+    if [ ! -z "$creatr" ]; then
+        CREATOR=$creatr
+    fi
+
     STATE='Zurich - DEFAULT'
     state=$(exiftool -q -q -b -api largefilesupport=1 -State ${video_file})
     if [ ! -z "$state" ]; then
@@ -152,6 +158,7 @@ generate_metadata(){
     echo "MODEL='${MODEL}'" >> $meta_file
     echo "GPS='${GPS}'" >> $meta_file
     echo "" >> $meta_file
+    echo "CREATOR='${CREATOR}'" >> $meta_file
     echo "COUNTRY_CODE='${COUNTRY_CODE}'" >> $meta_file
     echo "COUNTRY='${COUNTRY}'" >> $meta_file
     echo "STATE='${STATE}'" >> $meta_file
