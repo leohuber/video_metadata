@@ -18,14 +18,20 @@ set_xmp_dm_tags() {
 	exiftool -if "defined($SourceImageHeight)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeH<SourceImageHeight" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeH"
 	exiftool -if "defined($SourceImageWidth)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeW<SourceImageWidth" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeW"
 	exiftool -if "defined($VideoFrameRate)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameRate<VideoFrameRate" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameRate"
-	exiftool -if "defined($CompressorName)" -api largefilesupport=1 -overwrite_original "-xmp:VideoCompressor<CompressorName" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoCompressorName"
+	exiftool -if "defined($./v)" -api largefilesupport=1 -overwrite_original "-xmp:VideoCompressor<CompressorName" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoCompressorName"
 	exiftool -api largefilesupport=1 -overwrite_original -xmp:VideoFrameSizeUnit="pixels" -xmp:ShotDate="${DATE_CREATED}" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeUnit or xmp:ShotDate"
+}
+
+set_xmp_exif_tags() {
+	# https://exiftool.org/TagNames/XMP.html#exif
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:DateTimeOriginal="${DATE_CREATED}" \
+	$video_file &> /dev/null || error_exit "Could not update xmp exif schema tags"
 }
 
 set_xmp_core_schema_tags() {
 	exiftool -api largefilesupport=1 -overwrite_original -xmp:CountryCode="${COUNTRY_CODE}" -xmp:Country="${COUNTRY}" -xmp:State="${STATE}" -xmp:City="${CITY}" \
 	-xmp:Location="${SUBLOCATION}" -xmp:Title="${IDENTIFIER}_${TITLE_SUFFIX}" -xmp:Headline="${HEADLINE}" -xmp:Description="${DESCRIPTION}" \
-	-xmp:DateCreated="${DATE_CREATED}" -xmp:Marked="True" -xmp:Rights="${COPYRIGHT}" \
+	-xmp:DateCreated="${DATE_CREATED}" -xmp:Creator="${CREATOR}" -xmp:Marked="True" -xmp:Rights="${COPYRIGHT}" \
 	$video_file &> /dev/null || error_exit "Could not update xmp core schema tags"
 }
 
@@ -81,6 +87,9 @@ set_meta_info(){
 
 		# Set XMP Tiff Namespace Tags
 		set_xmp_tiff_namespace_tags
+
+		# Set XMP Exif Schema Tags
+		set_xmp_exif_tags
 		
 		# Set GPS coordinates
 		set_gps_coordinates
