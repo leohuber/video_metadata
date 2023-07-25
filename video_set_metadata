@@ -10,6 +10,7 @@ check_file_exists() {
 }
 
 set_gps_coordinates() {
+	exiftool -api largefilesupport=1 -overwrite_original -UserData:GPSCoordinates="${GPS}" $video_file &> /dev/null || error_exit "Could not update gps coordinates"
 	exiftool -api largefilesupport=1 -overwrite_original -GPSCoordinates="${GPS}" $video_file &> /dev/null || error_exit "Could not update gps coordinates"
 }
 
