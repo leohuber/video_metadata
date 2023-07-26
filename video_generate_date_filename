@@ -19,8 +19,13 @@ generate_date_filename(){
     # Check if video file exists
 	check_file_exists $video_file
 
+    # Extract fileame extension: https://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
     extension="${video_file##*.}"
+    
+    # Convert to lower case: https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash
     extension="$(tr [A-Z] [a-z] <<< "$extension")"
+
+    # Extract the model of the camera
     model=$(exiftool -q -q -b -api largefilesupport=1 -Model ${video_file})
 
     # check if we are processing a quicktime container

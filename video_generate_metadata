@@ -18,8 +18,13 @@ generate_metadata(){
     # Check if video file exists
 	check_file_exists $video_file
 
+    # Extract fileame extension: https://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
     extension="${video_file##*.}"
+
+    # Convert to lower case: https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash
     extension="$(tr [A-Z] [a-z] <<< "$extension")"
+
+    # Extract the model of the camera
     model=$(exiftool -q -q -b -api largefilesupport=1 -Model ${video_file})
 
     # Create meta data file name
@@ -58,6 +63,15 @@ generate_metadata(){
             # The tag SubSecCreateDate is available in Canon R6 files
             # It contains the local time without time offset
             datec=$(exiftool -q -q -b -api largefilesupport=1 -SubSecCreateDate ${video_file})
+            if [ ! -z "$datec" ]; then
+                DATE_CREATED=$datec
+                IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
+                IDENTIFIER=${IDENTIFIER// /_}
+                IDENTIFIER=${IDENTIFIER//:/}
+            fi
+        else
+            # Try the tag CreateDate
+            datec=$(exiftool -q -q -b -api largefilesupport=1 -CreateDate ${video_file})
             if [ ! -z "$datec" ]; then
                 DATE_CREATED=$datec
                 IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
