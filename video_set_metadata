@@ -18,7 +18,7 @@ set_xmp_dm_tags() {
 	exiftool -if "defined($SourceImageHeight)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeH<SourceImageHeight" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeH"
 	exiftool -if "defined($SourceImageWidth)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeW<SourceImageWidth" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeW"
 	exiftool -if "defined($VideoFrameRate)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameRate<VideoFrameRate" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameRate"
-	exiftool -if "defined($./v)" -api largefilesupport=1 -overwrite_original "-xmp:VideoCompressor<CompressorName" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoCompressorName"
+	exiftool -if "defined($CompressorName)" -api largefilesupport=1 -overwrite_original "-xmp:VideoCompressor<CompressorName" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoCompressorName"
 	exiftool -api largefilesupport=1 -overwrite_original -xmp:VideoFrameSizeUnit="pixels" -xmp:ShotDate="${DATE_CREATED}" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeUnit or xmp:ShotDate"
 }
 
