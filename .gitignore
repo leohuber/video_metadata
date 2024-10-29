@@ -8,4 +8,4 @@
 *.MTS
 **/.DS_Store
 **/meta/*.txt
-**/install_test_footage.sh 
+**/install_test_footage
