@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import glob; import os
 
 txt_files = glob.glob('./*.txt')
-for file_path in file_list:
+for file_path in txt_files:
     os.remove(txt_files)
