@@ -1,23 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-meta_file="zzz_meta_data_template.txt"
+meta_file = "zzz_meta_data_template.txt"
 
-rm -f $meta_file &> /dev/null
-touch $meta_file
-echo "# Generated meta data template file" >> $meta_file
-echo "" >> $meta_file
-echo "MAKE='Canon'" >> $meta_file
-echo "MODEL='Canon EOS R6'" >> $meta_file
-echo "GPS='-35.2975906, 149.1012676, 554'" >> $meta_file
-echo "" >> $meta_file
-echo "CREATOR='Leo Huber'" >> $meta_file
-echo "COUNTRY_CODE='CHE'" >> $meta_file
-echo "COUNTRY='Switzerland'" >> $meta_file
-echo "STATE='Zurich'" >> $meta_file
-echo "CITY='Zurich'" >> $meta_file
-echo "SUBLOCATION='Sublocation'" >> $meta_file
-echo "" >> $meta_file
-echo "HEADLINE='Headline'" >> $meta_file
-echo "TITLE_SUFFIX='title_suffix'" >> $meta_file
-echo "DESCRIPTION='Description'" >> $meta_file
-echo "COPYRIGHT='Leo Huber'" >> $meta_file
+with open(meta_file, 'w') as f:
+    f.write("# Generated meta data template file\n\n")
+    f.write("MAKE='Canon'\n")
+    f.write("MODEL='Canon EOS R6'\n")
+    f.write("GPS='-35.2975906, 149.1012676, 554'\n\n")
+    f.write("CREATOR='Leo Huber'\n")
+    f.write("COUNTRY_CODE='CHE'\n")
+    f.write("COUNTRY='Switzerland'\n")
+    f.write("STATE='Zurich'\n")
+    f.write("CITY='Zurich'\n")
+    f.write("SUBLOCATION='Sublocation'\n\n")
+    f.write("HEADLINE='Headline'\n")
+    f.write("TITLE_SUFFIX='title_suffix'\n")
+    f.write("DESCRIPTION='Description'\n")
+    f.write("COPYRIGHT='Leo Huber'\n")
