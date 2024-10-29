@@ -16,7 +16,7 @@ files = []
 for ext in file_extensions:
     files.extend(glob.glob(ext))
 
-# Delete each file
+# Delete each movie file
 print(f"Found {len(files)} movie files. Deleting them...")
 for file in files:
     os.remove(file)
