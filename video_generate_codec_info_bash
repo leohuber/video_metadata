@@ -1,0 +1,253 @@
+#!/bin/bash
+
+error_exit() {
+  echo "$1" 1>&2
+  exit 1
+}
+
+check_file_exists() {
+	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
+}
+
+generate_codec_info(){
+
+  video_file=$1
+  codec_info=""
+
+  # Check if video file exists
+	check_file_exists $video_file
+
+  # Create ffprobe data file name
+  codec_info="${video_file%%.*}_codec_bash.txt"
+
+  # create new and delte old codec info file
+  rm -f $codec_info &> /dev/null
+  touch $codec_info
+  echo "# Generated mediainfo data file for video ${video_file}" >> $codec_info
+  echo "" >> $codec_info
+  echo -n "COMMENT='" >> $codec_info
+
+  # Format
+  format=$(mediainfo -f --Output='Video;%Format%' ${video_file})
+  format_info=$(mediainfo -f --Output='Video;%Format/Info%' ${video_file})
+  format_profile=$(mediainfo -f --Output='Video;%Format_Profile%' ${video_file})
+  format_settings=$(mediainfo -f --Output='Video;%Format_Settings%' ${video_file})
+  if [ ! -z "$format" ] || [ ! -z "$format_info" ] || [ ! -z "$format_profile" ] || [ ! -z "$format_settings" ]; then
+    format_out="Format:"
+    cs=" "
+    if [ ! -z "$format" ]; then
+      format_out="${format_out}${cs}${format}"
+      cs=", "
+    fi
+    if [ ! -z "$format_info" ]; then
+      format_out="${format_out}${cs}${format_info}"
+      cs=", "
+    fi
+    if [ ! -z "$format_profile" ]; then
+      format_out="${format_out}${cs}${format_profile}"
+      cs=", "
+    fi
+    if [ ! -z "$format_settings" ]; then
+      format_out="${format_out}${cs}${format_settings}"
+      cs=", "
+    fi
+    echo "${format_out}" >> $codec_info
+  fi
+
+  # HDR Format
+  hdr_format=$(mediainfo -f --Output='Video;%HDR_Format/String%' ${video_file})
+  if [ ! -z "$hdr_format" ]; then
+      format_out="HDR Format: $hdr_format"
+      echo "${format_out}$" >> $codec_info
+  fi
+
+  # Pixel Format
+  colorspace=$(mediainfo -f --Output='Video;%ColorSpace%' ${video_file})
+  chroma_subsampling=$(mediainfo -f --Output='Video;%ChromaSubsampling/String%' ${video_file})
+  bitdepth=$(mediainfo -f --Output='Video;%BitDepth/String%' ${video_file})
+  if [ ! -z "$colorspace" ] || [ ! -z "$chroma_subsampling" ] || [ ! -z "$bitdepth" ]; then
+    format_out="Pixel Format:"
+    cs=" "
+    if [ ! -z "$colorspace" ]; then
+      format_out="${format_out}${cs}ColorSpace=${colorspace}"
+      cs=", "
+    fi
+    if [ ! -z "$format_info" ]; then
+      format_out="${format_out}${cs}ChromaSubsampling=${chroma_subsampling}"
+      cs=", "
+    fi
+    if [ ! -z "$format_profile" ]; then
+      format_out="${format_out}${cs}BitDepth=${bitdepth}"
+      cs=", "
+    fi
+    echo "${format_out}" >> $codec_info
+  fi
+
+  # Frame Rate
+  framerate_mode=$(mediainfo -f --Output='Video;%FrameRate_Mode%' ${video_file})
+  framerate=$(mediainfo -f --Output='Video;%FrameRate%' ${video_file})
+  framerate_min=$(mediainfo -f --Output='Video;%FrameRate_Minimum%' ${video_file})
+  framerate_max=$(mediainfo -f --Output='Video;%FrameRate_Maximum%' ${video_file})
+  if [ ! -z "$framerate_mode" ] || [ ! -z "$framerate" ] || [ ! -z "$framerate_min" ] || [ ! -z "$framerate_max" ]; then
+    format_out="Frame Rate:"
+    cs=" "
+    if [ ! -z "$framerate_mode" ]; then
+      format_out="${format_out}${cs}Mode=${framerate_mode}"
+      cs=", "
+    fi
+    if [ ! -z "$framerate" ]; then
+      format_out="${format_out}${cs}Rate=${framerate}"
+      cs=", "
+    fi
+    if [ ! -z "$framerate_min" ]; then
+      format_out="${format_out}${cs}Min=${framerate_min}"
+      cs=", "
+    fi
+    if [ ! -z "$framerate_max" ]; then
+      format_out="${format_out}${cs}Max=${framerate_max}"
+      cs=", "
+    fi
+    echo "${format_out}" >> $codec_info
+  fi
+
+
+  # Scan Type
+  scantype=$(mediainfo -f --Output='Video;%ScanType%' ${video_file})
+  scantype_storemethod=$(mediainfo -f --Output='Video;%ScanType_StoreMethod%' ${video_file})
+  scanorder=$(mediainfo -f --Output='Video;%ScanOrder/String%' ${video_file})
+  if [ ! -z "$scantype" ] || [ ! -z "$scantype_storemethod" ] || [ ! -z "$scanorder" ]; then
+    format_out="Scan Type:"
+    cs=" "
+    if [ ! -z "$scantype" ]; then
+      format_out="${format_out}${cs}Type=${scantype}"
+      cs=", "
+    fi
+    if [ ! -z "$scantype_storemethod" ]; then
+      format_out="${format_out}${cs}StoreMethod=${scantype_storemethod}"
+      cs=", "
+    fi
+    if [ ! -z "$scanorder" ]; then
+      format_out="${format_out}${cs}ScanOrder=${scanorder}"
+      cs=", "
+    fi
+    echo "${format_out}" >> $codec_info
+  fi
+
+  # Bit Rate:
+  bitrate_mode=$(mediainfo -f --Output='Video;%BitRate_Mode%' ${video_file})
+  bitrate=$(mediainfo -f --Output='Video;%BitRate/String%' ${video_file})
+  bitrate_min=$(mediainfo -f --Output='Video;%BitRate_Minimum/String%' ${video_file})
+  bitrate_max=$(mediainfo -f --Output='Video;%BitRate_Maximum/String%' ${video_file})
+  if [ ! -z "$bitrate_mode" ] || [ ! -z "$bitrate" ] || [ ! -z "$bitrate_min" ] || [ ! -z "$bitrate_max" ]; then
+    format_out="Bit Rate:"
+    cs=" "
+    if [ ! -z "$bitrate_mode" ]; then
+      format_out="${format_out}${cs}Mode=${bitrate_mode}"
+      cs=", "
+    fi
+    if [ ! -z "$bitrate" ]; then
+      format_out="${format_out}${cs}Rate=${bitrate}"
+      cs=", "
+    fi
+    if [ ! -z "$bitrate_min" ]; then
+      format_out="${format_out}${cs}Min=${bitrate_min}"
+      cs=", "
+    fi
+    if [ ! -z "$bitrate_max" ]; then
+      format_out="${format_out}${cs}Max=${bitrate_max}"
+      cs=", "
+    fi
+    echo "${format_out}" >> $codec_info
+  fi
+
+  # Color
+  colour_primaries=$(mediainfo -f --Output='Video;%colour_primaries%' ${video_file})
+  transfer_characteristics=$(mediainfo -f --Output='Video;%transfer_characteristics%' ${video_file})
+  matrix_coefficients=$(mediainfo -f --Output='Video;%matrix_coefficients%' ${video_file})
+  if [ ! -z "$colour_primaries" ] || [ ! -z "$transfer_characteristics" ] || [ ! -z "$matrix_coefficients" ]; then
+    format_out="Color:"
+    cs=" "
+    if [ ! -z "$colour_primaries" ]; then
+      format_out="${format_out}${cs}Primaries=${colour_primaries}"
+      cs=", "
+    fi
+    if [ ! -z "$transfer_characteristics" ]; then
+      format_out="${format_out}${cs}TransferCharacteristics=${transfer_characteristics}"
+      cs=", "
+    fi
+    if [ ! -z "$matrix_coefficients" ]; then
+      format_out="${format_out}${cs}MatrixCoefficients=${matrix_coefficients}"
+      cs=", "
+    fi
+    echo "${format_out}" >> $codec_info
+  fi
+
+  # Dimensions
+  height=$(mediainfo -f --Output='Video;%Height%' ${video_file})
+  width=$(mediainfo -f --Output='Video;%Width%' ${video_file})
+  aspect_ratio=$(mediainfo -f --Output='Video;%DisplayAspectRatio/String%' ${video_file})
+  rotation=$(mediainfo -f --Output='Video;%Rotation%' ${video_file})
+  if [ ! -z "$height" ] || [ ! -z "$width" ] || [ ! -z "$aspect_ratio" ] || [ ! -z "$rotation" ]; then
+    format_out="Dimensions:"
+    cs=" "
+    if [ ! -z "$height" ]; then
+      format_out="${format_out}${cs}Height=${height}"
+      cs=", "
+    fi
+    if [ ! -z "$width" ]; then
+      format_out="${format_out}${cs}Width=${width}"
+      cs=", "
+    fi
+    if [ ! -z "$aspect_ratio" ]; then
+      format_out="${format_out}${cs}AspectRatio=${aspect_ratio}"
+      cs=", "
+    fi
+    if [ ! -z "$rotation" ]; then
+      format_out="${format_out}${cs}Rotation=${rotation}"
+      cs=", "
+    fi
+    echo "${format_out}" >> $codec_info
+  fi
+
+  # Audio
+  audio_format=$(mediainfo -f --Output='Audio;%Format%' ${video_file})
+  audio_bitrate=$(mediainfo -f --Output='Audio;%BitRate/String%' ${video_file})
+  audio_samplingrate=$(mediainfo -f --Output='Audio;%SamplingRate/String%' ${video_file})
+  audio_channels=$(mediainfo -f --Output='Audio;%Channel(s)%' ${video_file})
+  audio_channelslayout=$(mediainfo -f --Output='Audio;%ChannelLayout%' ${video_file})
+  if [ ! -z "$audio_format" ] || [ ! -z "$audio_bitrate" ] || [ ! -z "$audio_samplingrate" ] || [ ! -z "$audio_channels" ] || [ ! -z "$audio_channelslayout" ]; then
+    format_out="Audio:"
+    cs=" "
+    if [ ! -z "$audio_format" ]; then
+      format_out="${format_out}${cs}Format=${audio_format}"
+      cs=", "
+    fi
+    if [ ! -z "$audio_bitrate" ]; then
+      format_out="${format_out}${cs}BitRate=${audio_bitrate}"
+      cs=", "
+    fi
+    if [ ! -z "$audio_samplingrate" ]; then
+      format_out="${format_out}${cs}SamplingRate=${audio_samplingrate}"
+      cs=", "
+    fi
+    if [ ! -z "$audio_channels" ]; then
+      format_out="${format_out}${cs}Channels=${audio_channels}"
+      cs=", "
+    fi
+    if [ ! -z "$audio_channelslayout" ]; then
+      format_out="${format_out}${cs}Layout=${audio_channelslayout}"
+      cs=", "
+    fi
+    echo "${format_out}" >> $codec_info
+  fi
+
+  # delete last new line character and add the ending '
+  printf %s "$(< $codec_info)" > $codec_info
+  echo -n "'" >> $codec_info
+
+}
+
+for movie_file in "$@"
+do
+    generate_codec_info ${movie_file};
+done
