@@ -1,93 +1,80 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-error_exit() {
-  echo "$1" 1>&2
-  exit 1
-}
+import sys
+import os
+import subprocess
 
-check_file_exists() {
-	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
-}
+def error_exit(message):
+    # Prints an error message to the standard error stream and exits the script with a status code of 1.
+    print(message, file=sys.stderr)
+    sys.exit(1)
 
-generate_date_filename(){
-    
-    # Try to extract the date & create an identifier
+def check_file_exists(file_path):
+    # Check if the given file path points to an existing file. If not, print an error message and exit the script.
+    if not os.path.isfile(file_path):
+        error_exit(f"Could not find file: {file_path}")
 
-    # video file
-    video_file=$1
+def generate_date_filename(video_file):
+    check_file_exists(video_file)
 
-    # Check if video file exists
-	check_file_exists $video_file
+    # Extracts the file extension from the given video file name, converts it to lowercase, and stores it in the variable 'extension'.
+    extension = os.path.splitext(video_file)[1][1:].lower()
 
-    # Extract fileame extension: https://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
-    extension="${video_file##*.}"
-    
-    # Convert to lower case: https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash
-    extension="$(tr [A-Z] [a-z] <<< "$extension")"
+    # Extracts the camera model from the video file using exiftool and stores it in the variable 'model'.
+    model = subprocess.run(
+        ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', '-Model', video_file],
+        stdout=subprocess.PIPE, text=True
+    ).stdout.strip()
 
-    # Extract the model of the camera
-    model=$(exiftool -q -q -b -api largefilesupport=1 -Model ${video_file})
+    date_created = None
+    identifier = None
 
-    # check if we are processing a quicktime container
-    if [ "$extension" = "mov" ]; then
-        # The QuickTime:CreationDate (sic) field you are looking at in Exiftool is a non-standard field that Apple adds to iPhone videos.
-        # It records the capture date in local time with a time zone. As far as I know, only iPhones add this field.
-        datec=$(exiftool -q -q -b -api largefilesupport=1 -CreationDate ${video_file})
-        if [ ! -z "$datec" ]; then
-            DATE_CREATED=$datec
-            IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
-            IDENTIFIER=${IDENTIFIER// /_}
-            IDENTIFIER=${IDENTIFIER//:/}
-            mv $video_file ${IDENTIFIER}.mov
-        else
-            # The tag CreateDate is available in mov files (for instance the files created with Filmic Pro on Iphone)
-            # It contains the local time without time offset
-            datec=$(exiftool -q -q -b -api largefilesupport=1 -CreateDate ${video_file})
-            if [ ! -z "$datec" ]; then
-                DATE_CREATED=$datec
-                IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
-                IDENTIFIER=${IDENTIFIER// /_}
-                IDENTIFIER=${IDENTIFIER//:/}
-                mv $video_file ${IDENTIFIER}.mov
-            fi
-        fi
-    fi
+    if extension == "mov":
+        result = subprocess.run(
+            ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', '-CreationDate', video_file],
+            stdout=subprocess.PIPE, text=True
+        )
+        datec = result.stdout.strip()
+        if datec:
+            date_created = datec
+        else:
+            result = subprocess.run(
+                ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', '-CreateDate', video_file],
+                stdout=subprocess.PIPE, text=True
+            )
+            datec = result.stdout.strip()
+            if datec:
+                date_created = datec
+        if date_created:
+            identifier = date_created[:19].replace(' ', '_').replace(':', '')
+            os.rename(video_file, f"{identifier}.mov")
 
-    # Check if we are processing an mp4 container
-    if [ "$extension" = "mp4" ]; then
-        if [ "$model" = "Canon EOS R6" ]; then
-            # The tag CreateDate is available in MP4 files (at least in the canon R6)
-            # It contains the local time without time offset
-            datec=$(exiftool -q -q -b -api largefilesupport=1 -CreateDate ${video_file})
-            if [ ! -z "$datec" ]; then
-                DATE_CREATED=$datec
-                IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
-                IDENTIFIER=${IDENTIFIER// /_}
-                IDENTIFIER=${IDENTIFIER//:/}
-                mv $video_file ${IDENTIFIER}.mp4
-            fi
-        fi
-    fi
+    elif extension == "mp4" and model == "Canon EOS R6":
+        result = subprocess.run(
+            ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', '-CreateDate', video_file],
+            stdout=subprocess.PIPE, text=True
+        )
+        datec = result.stdout.strip()
+        if datec:
+            date_created = datec
+            identifier = date_created[:19].replace(' ', '_').replace(':', '')
+            os.rename(video_file, f"{identifier}.mp4")
 
-    # Check if we are processing an mts container
-    if [ "$extension" = "mts" ]; then
-        if [ "$model" = "ILCE-7" ] || [ "$model" = "HDR-CX550VE" ]; then
-            # The tag DateTimeOriginal is available in mts files (at least in the sony cameras (ILCE-7, HDR-CX550VE)
-            # It contains the local time with time offset
-            datec=$(exiftool -q -q -b -api largefilesupport=1 -DateTimeOriginal ${video_file})
-            if [ ! -z "$datec" ]; then
-                DATE_CREATED=$datec
-                IDENTIFIER=$(echo $DATE_CREATED | cut -c1-19)
-                IDENTIFIER=${IDENTIFIER// /_}
-                IDENTIFIER=${IDENTIFIER//:/}
-                mv $video_file ${IDENTIFIER}.mts
-            fi
-        fi
-    fi
+    elif extension == "mts" and model in ["ILCE-7", "HDR-CX550VE"]:
+        result = subprocess.run(
+            ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', '-DateTimeOriginal', video_file],
+            stdout=subprocess.PIPE, text=True
+        )
+        datec = result.stdout.strip()
+        if datec:
+            date_created = datec
+            identifier = date_created[:19].replace(' ', '_').replace(':', '')
+            os.rename(video_file, f"{identifier}.mts")
 
-}
+# Check if at least one video file is provided as a command-line argument
+if len(sys.argv) < 2:
+    error_exit("No video file specified. Please provide at least one video file as an argument.")
 
-for movie_file in "$@"
-do
-    generate_date_filename ${movie_file};
-done
+# Process each video file provided as a command-line argument
+for video_file in sys.argv[1:]:
+    generate_date_filename(video_file)
