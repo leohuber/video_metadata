@@ -1,0 +1,112 @@
+#!/bin/bash
+
+error_exit() {
+  echo "$1" 1>&2
+  exit 1
+}
+
+check_file_exists() {
+	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
+}
+
+set_gps_coordinates() {
+	exiftool -api largefilesupport=1 -overwrite_original -UserData:GPSCoordinates="${GPS}" $video_file &> /dev/null || error_exit "Could not update gps coordinates"
+	exiftool -api largefilesupport=1 -overwrite_original -GPSCoordinates="${GPS}" $video_file &> /dev/null || error_exit "Could not update gps coordinates"
+}
+
+set_xmp_dm_tags() {
+	exiftool -if "defined($SourceImageHeight)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeH<SourceImageHeight" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeH"
+	exiftool -if "defined($SourceImageWidth)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeW<SourceImageWidth" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeW"
+	exiftool -if "defined($VideoFrameRate)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameRate<VideoFrameRate" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameRate"
+	exiftool -if "defined($CompressorName)" -api largefilesupport=1 -overwrite_original "-xmp:VideoCompressor<CompressorName" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoCompressorName"
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:VideoFrameSizeUnit="pixels" -xmp:ShotDate="${DATE_CREATED}" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeUnit or xmp:ShotDate"
+}
+
+set_xmp_exif_tags() {
+	# https://exiftool.org/TagNames/XMP.html#exif
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:DateTimeOriginal="${DATE_CREATED}" \
+	$video_file &> /dev/null || error_exit "Could not update xmp exif schema tags"
+}
+
+set_xmp_core_schema_tags() {
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:CountryCode="${COUNTRY_CODE}" -xmp:Country="${COUNTRY}" -xmp:State="${STATE}" -xmp:City="${CITY}" \
+	-xmp:Location="${SUBLOCATION}" -xmp:Title="${IDENTIFIER}_${TITLE_SUFFIX}" -xmp:Headline="${HEADLINE}" -xmp:Description="${DESCRIPTION}" \
+	-xmp:DateCreated="${DATE_CREATED}" -xmp:Creator="${CREATOR}" -xmp:Marked="True" -xmp:Rights="${COPYRIGHT}" \
+	$video_file &> /dev/null || error_exit "Could not update xmp core schema tags"
+}
+
+set_xmp_extension_schema_tags() {
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:LocationShownCountryCode="${COUNTRY_CODE}" -xmp:LocationCreatedCountryCode="${COUNTRY_CODE}"  \
+	-xmp:LocationShownCountryName="${COUNTRY}" -xmp:LocationCreatedCountryName="${COUNTRY}" \
+	-xmp:LocationShownProvinceState="${STATE}" -xmp:LocationCreatedProvinceState="${STATE}" \
+	-xmp:LocationShownCity="${CITY}" -xmp:LocationCreatedCity="${CITY}" \
+	-xmp:LocationShownSublocation="${SUBLOCATION}" -xmp:LocationCreatedSublocation="${SUBLOCATION}" \
+	-xmp:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture" \
+	$video_file &> /dev/null || error_exit "Could not update xmp extension schema tags"
+}
+
+set_xmp_tiff_namespace_tags() {
+	exiftool -api largefilesupport=1 -overwrite_original -xmp:Model="${MODEL}" -xmp:Make="${MAKE}" -xmp:ImageDescription="${DESCRIPTION}" $video_file &> /dev/null || error_exit "Could not update xmp tiff namespace tags"
+}
+
+
+set_meta_info(){
+
+	video_file=$1
+	meta_file=""
+
+	# Check if video file exists
+	check_file_exists $video_file
+
+	extension="${video_file##*.}"
+	extension="$(tr [A-Z] [a-z] <<< "$extension")"
+
+	# check if we are processing a quicktime or MP4 container
+	if [ "$extension" = "mov" ] || [ "$extension" = "mp4" ] ; then
+
+		# Create meta data file name
+		meta_file="${video_file%%.*}_meta.txt"
+
+		# Check if meta file exists and load variables
+		check_file_exists $meta_file
+		source $meta_file
+
+		# Load template file if it exists
+		if test -f "./zzz_meta_data_template.txt"; then
+			source "./zzz_meta_data_template.txt"
+		fi
+
+		# Set XMP Dynamic Media Tags
+		set_xmp_dm_tags
+
+		# Set XMP Core Schema Tags
+		set_xmp_core_schema_tags
+
+		# Set XMP Extension Schema Tags
+		set_xmp_extension_schema_tags
+
+		# Set XMP Tiff Namespace Tags
+		set_xmp_tiff_namespace_tags
+
+		# Set XMP Exif Schema Tags
+		set_xmp_exif_tags
+		
+		# Set GPS coordinates
+		set_gps_coordinates
+
+		# Rename movie data file
+		# Todo: Check if file name is the same and skip rename, otherwise there is an error
+		mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.${extension}
+
+		# Rename meta file
+		# Todo: Check if file name is the same and skip rename, otherwise there is an error
+		mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
+
+	fi
+
+}
+
+for movie_file in "$@"
+do
+    set_meta_info ${movie_file};
+done
