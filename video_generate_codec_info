@@ -118,6 +118,7 @@ def generate_codec_info(video_file):
       f.write(f"Audio: {', '.join(audio_fields)}")
     f.write("'")
 
+# Check if mediainfo command is available
 if shutil.which('mediainfo') is None:
   error_exit("Mediainfo command not found. Please install it before running this script.")
 
