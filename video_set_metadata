@@ -49,8 +49,6 @@ def set_meta_info(video_file):
 		
 		identifier = meta_data.get('IDENTIFIER', '')
 		title_suffix = meta_data.get('TITLE_SUFFIX', '')
-		print(f"Identifier: {identifier}")
-		print(f"Title Suffix: {title_suffix}")
 		new_video_file = f"{identifier}_{title_suffix}{extension}"
 		if video_file != new_video_file:
 			os.rename(video_file, new_video_file)
