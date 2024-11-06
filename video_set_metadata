@@ -26,7 +26,7 @@ def set_meta_info(video_file):
 		# Load meta data from the meta file
 		with open(meta_file) as f:
 			meta_data = json.load(f)
-
+		
 		# Load default meta data from a template file and overwrite the values with the values from default meta data file
 		template_file = "./zzz_meta_data_template.json"
 		if os.path.isfile(template_file):
@@ -34,43 +34,47 @@ def set_meta_info(video_file):
 				template_data = json.load(f)
 				meta_data.update(template_data)
 
-		gps = meta_data.get('GPS')
-		if gps:
-			commands = [
-				['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-UserData:GPSCoordinates={gps}', video_file],
-				['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-GPSCoordinates={gps}', video_file],
-			]
-			for cmd in commands:
-				result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-				if result.returncode != 0:
-					error_exit("Could not update GPS coordinates")
-
 		date_created = meta_data.get('DATE_CREATED')
 		source_image_height = meta_data.get('SOURCE_IMAGE_HEIGHT')
 		source_image_width = meta_data.get('SOURCE_IMAGE_WIDTH')
 		video_frame_rate = meta_data.get('VIDEO_FRAME_RATE')
 		compressor_name = meta_data.get('COMPRESSOR_NAME')
-		commands = [
-			['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoFrameSizeH={source_image_height}', video_file],
-			['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoFrameSizeW={source_image_width}', video_file],
-			['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoFrameRate={video_frame_rate}', video_file],
-			['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoCompressor={compressor_name}', video_file],
-			['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', '-xmp:VideoFrameSizeUnit=pixels', f'-xmp:ShotDate={date_created}', video_file]
-		]
+		gps = meta_data.get('GPS')
+
+		commands = []
+
+		if gps:
+			commands.extend([
+				['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-UserData:GPSCoordinates={gps}', video_file],
+				['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-GPSCoordinates={gps}', video_file],
+			])
+
+		if source_image_height:
+			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', '-xmp:VideoFrameSizeUnit=pixels', f'-xmp:VideoFrameSizeH={source_image_height}', video_file])
+		if source_image_width:
+			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', '-xmp:VideoFrameSizeUnit=pixels', f'-xmp:VideoFrameSizeW={source_image_width}', video_file])
+		if video_frame_rate:
+			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoFrameRate={video_frame_rate}', video_file])
+		if compressor_name:
+			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoCompressor={compressor_name}', video_file])
+		if date_created:
+			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:ShotDate={date_created}', video_file])
+
+		# TODO: Additional exiftool commands would be implemented here
 
 		for cmd in commands:
 			result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 			if result.returncode != 0:
-				error_exit("Could not update XMP Dynamic Media tags")
-
-		# TODO: Additional exiftool commands would be implemented here
+				error_exit("Could not update metadata")
 		
+		# rename movie file
 		identifier = meta_data.get('IDENTIFIER', '')
 		title_suffix = meta_data.get('TITLE_SUFFIX', '')
 		new_video_file = f"{identifier}_{title_suffix}{extension}"
 		if video_file != new_video_file:
 			os.rename(video_file, new_video_file)
 
+		# rename meta data file
 		new_meta_file = f"{identifier}_{title_suffix}_meta.json"
 		if meta_file != new_meta_file:
 			os.rename(meta_file, new_meta_file)
