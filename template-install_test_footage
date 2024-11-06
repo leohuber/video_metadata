@@ -47,11 +47,11 @@ if len(files) > 0:
 else:
     print("No test footage files found to copy.")
 
-# Remove txt files
-txt_files = glob.glob('*.txt')
-if len(txt_files) > 0:
-    print("Removing all .txt files in the current directory...")
-    for file in txt_files:
+# Remove json files
+json_files = glob.glob('*.json')
+if len(json_files) > 0:
+    print("Removing all .json files in the current directory...")
+    for file in json_files:
         os.remove(file)
 else:
-    print("No .txt files found to remove.")
+    print("No .json files found to remove.")
