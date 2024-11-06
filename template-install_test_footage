@@ -12,6 +12,14 @@ test_footage_mov = "/Volumes/Media/video/03_meta_test_footage/"
 # File extensions to delete
 file_extensions = ['*.mp4', '*.MP4', '*.mov', '*.MOV', '*.mts', '*.MTS']
 
+# Remove the backup directory if it exists
+backup_directory = "./backup"
+if os.path.exists(backup_directory) and os.path.isdir(backup_directory):
+    print(f"Removing backup directory: {backup_directory}")
+    shutil.rmtree(backup_directory)
+else:
+    print("No backup directory found to remove.")
+
 # Recursively search for files with the specified extensions
 def find_files_with_extensions(directory, extensions):
     found_files = []
