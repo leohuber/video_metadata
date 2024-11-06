@@ -34,15 +34,11 @@ def set_meta_info(video_file):
 				template_data = json.load(f)
 				meta_data.update(template_data)
 
+		# mandatory values
 		identifier = meta_data.get('IDENTIFIER')
 		date_created = meta_data.get('DATE_CREATED')
 		make = meta_data.get('MAKE')
 		model = meta_data.get('MODEL')
-		source_image_height = meta_data.get('SOURCE_IMAGE_HEIGHT')
-		source_image_width = meta_data.get('SOURCE_IMAGE_WIDTH')
-		video_frame_rate = meta_data.get('VIDEO_FRAME_RATE')
-		compressor_name = meta_data.get('COMPRESSOR_NAME')
-		gps = meta_data.get('GPS')
 		creator = meta_data.get('CREATOR')
 		country_code = meta_data.get('COUNTRY_CODE')
 		country = meta_data.get('COUNTRY')
@@ -53,6 +49,43 @@ def set_meta_info(video_file):
 		title_suffix = meta_data.get('TITLE_SUFFIX')
 		description = meta_data.get('DESCRIPTION')
 		copyright = meta_data.get('COPYRIGHT')
+
+		# Check if variables are not None and string values do not contain 'default' (case insensitive)
+		if identifier is None or (isinstance(identifier, str) and 'default' in identifier.lower()):
+			error_exit(f"Invalid value for IDENTIFIER: {identifier}")
+		if date_created is None or (isinstance(date_created, str) and 'default' in date_created.lower()):
+			error_exit(f"Invalid value for DATE_CREATED: {date_created}")
+		if make is None or (isinstance(make, str) and 'default' in make.lower()):
+			error_exit(f"Invalid value for MAKE: {make}")
+		if model is None or (isinstance(model, str) and 'default' in model.lower()):
+			error_exit(f"Invalid value for MODEL: {model}")
+		if creator is None or (isinstance(creator, str) and 'default' in creator.lower()):
+			error_exit(f"Invalid value for CREATOR: {creator}")
+		if country_code is None or (isinstance(country_code, str) and 'default' in country_code.lower()):
+			error_exit(f"Invalid value for COUNTRY_CODE: {country_code}")
+		if country is None or (isinstance(country, str) and 'default' in country.lower()):
+			error_exit(f"Invalid value for COUNTRY: {country}")
+		if state is None or (isinstance(state, str) and 'default' in state.lower()):
+			error_exit(f"Invalid value for STATE: {state}")
+		if city is None or (isinstance(city, str) and 'default' in city.lower()):
+			error_exit(f"Invalid value for CITY: {city}")
+		if sublocation is None or (isinstance(sublocation, str) and 'default' in sublocation.lower()):
+			error_exit(f"Invalid value for SUBLOCATION: {sublocation}")
+		if headline is None or (isinstance(headline, str) and 'default' in headline.lower()):
+			error_exit(f"Invalid value for HEADLINE: {headline}")
+		if title_suffix is None or (isinstance(title_suffix, str) and 'default' in title_suffix.lower()):
+			error_exit(f"Invalid value for TITLE_SUFFIX: {title_suffix}")
+		if description is None or (isinstance(description, str) and 'default' in description.lower()):
+			error_exit(f"Invalid value for DESCRIPTION: {description}")
+		if copyright is None or (isinstance(copyright, str) and 'default' in copyright.lower()):
+			error_exit(f"Invalid value for COPYRIGHT: {copyright}")
+
+		# optional values
+		gps = meta_data.get('GPS')
+		source_image_height = meta_data.get('SOURCE_IMAGE_HEIGHT')
+		source_image_width = meta_data.get('SOURCE_IMAGE_WIDTH')
+		video_frame_rate = meta_data.get('VIDEO_FRAME_RATE')
+		compressor_name = meta_data.get('COMPRESSOR_NAME')
 
 		commands = []
 
@@ -70,9 +103,15 @@ def set_meta_info(video_file):
 			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoFrameRate={video_frame_rate}', video_file])
 		if compressor_name:
 			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoCompressor={compressor_name}', video_file])
-		if date_created:
-			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:ShotDate={date_created}', video_file])
+		
+		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:ShotDate={date_created}', video_file])
+		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:DateTimeOriginal={date_created}', video_file])
 
+
+		#exiftool -api largefilesupport=1 -overwrite_original -xmp:CountryCode="${COUNTRY_CODE}" -xmp:Country="${COUNTRY}" -xmp:State="${STATE}" -xmp:City="${CITY}" \
+		#-xmp:Location="${SUBLOCATION}" -xmp:Title="${IDENTIFIER}_${TITLE_SUFFIX}" -xmp:Headline="${HEADLINE}" -xmp:Description="${DESCRIPTION}" \
+		#-xmp:DateCreated="${DATE_CREATED}" -xmp:Creator="${CREATOR}" -xmp:Marked="True" -xmp:Rights="${COPYRIGHT}" \
+	
 		# TODO: Additional exiftool commands would be implemented here
 
 		for cmd in commands:
