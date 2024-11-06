@@ -48,7 +48,7 @@ def generate_date_filename(video_file):
                 date_created = datec
         if date_created:
             identifier = date_created[:19].replace(' ', '_').replace(':', '')
-            os.rename(video_file, f"{identifier}.mov")
+            shutil.copy(video_file, f"{identifier}.mov")
 
     elif extension == "mp4" and model == "Canon EOS R6":
         result = subprocess.run(
@@ -59,7 +59,7 @@ def generate_date_filename(video_file):
         if datec:
             date_created = datec
             identifier = date_created[:19].replace(' ', '_').replace(':', '')
-            os.rename(video_file, f"{identifier}.mp4")
+            shutil.copy(video_file, f"{identifier}.mp4")
 
     elif extension == "mts" and model in ["ILCE-7", "HDR-CX550VE"]:
         result = subprocess.run(
@@ -70,7 +70,14 @@ def generate_date_filename(video_file):
         if datec:
             date_created = datec
             identifier = date_created[:19].replace(' ', '_').replace(':', '')
-            os.rename(video_file, f"{identifier}.mts")
+            shutil.copy(video_file, f"{identifier}.mts")
+
+    # Create backup directory if it doesn't exist
+    backup_dir = os.path.join(os.path.dirname(video_file), "backup")
+    os.makedirs(backup_dir, exist_ok=True)
+    
+    # Copy the original file to the backup directory
+    shutil.copy(video_file, os.path.join(backup_dir, os.path.basename(video_file)))
 
 # Check if the exiftool command is available in the system
 if shutil.which('exiftool') is None:
