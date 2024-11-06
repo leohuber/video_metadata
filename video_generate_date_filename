@@ -77,7 +77,7 @@ def generate_date_filename(video_file):
     os.makedirs(backup_dir, exist_ok=True)
     
     # Copy the original file to the backup directory
-    shutil.copy(video_file, os.path.join(backup_dir, os.path.basename(video_file)))
+    shutil.move(video_file, os.path.join(backup_dir, os.path.basename(video_file)))
 
 # Check if the exiftool command is available in the system
 if shutil.which('exiftool') is None:
