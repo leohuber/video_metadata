@@ -1,112 +1,71 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-error_exit() {
-  echo "$1" 1>&2
-  exit 1
-}
+import json
+import sys
+import shutil
+import os
+import subprocess
 
-check_file_exists() {
-	ls ${1}  &> /dev/null || error_exit "Could not find file: ${1}"
-}
+def error_exit(message):
+	print(message, file=sys.stderr)
+	sys.exit(1)
 
-set_gps_coordinates() {
-	exiftool -api largefilesupport=1 -overwrite_original -UserData:GPSCoordinates="${GPS}" $video_file &> /dev/null || error_exit "Could not update gps coordinates"
-	exiftool -api largefilesupport=1 -overwrite_original -GPSCoordinates="${GPS}" $video_file &> /dev/null || error_exit "Could not update gps coordinates"
-}
+def check_file_exists(file_path):
+	if not os.path.isfile(file_path):
+		error_exit(f"Could not find file: {file_path}")
 
-set_xmp_dm_tags() {
-	exiftool -if "defined($SourceImageHeight)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeH<SourceImageHeight" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeH"
-	exiftool -if "defined($SourceImageWidth)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameSizeW<SourceImageWidth" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeW"
-	exiftool -if "defined($VideoFrameRate)" -api largefilesupport=1 -overwrite_original "-xmp:VideoFrameRate<VideoFrameRate" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameRate"
-	exiftool -if "defined($CompressorName)" -api largefilesupport=1 -overwrite_original "-xmp:VideoCompressor<CompressorName" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoCompressorName"
-	exiftool -api largefilesupport=1 -overwrite_original -xmp:VideoFrameSizeUnit="pixels" -xmp:ShotDate="${DATE_CREATED}" $video_file &> /dev/null || error_exit "Could not update tag: xmp:VideoFrameSizeUnit or xmp:ShotDate"
-}
+def set_meta_info(video_file):
+	check_file_exists(video_file)
 
-set_xmp_exif_tags() {
-	# https://exiftool.org/TagNames/XMP.html#exif
-	exiftool -api largefilesupport=1 -overwrite_original -xmp:DateTimeOriginal="${DATE_CREATED}" \
-	$video_file &> /dev/null || error_exit "Could not update xmp exif schema tags"
-}
+	extension = os.path.splitext(video_file)[1].lower()
 
-set_xmp_core_schema_tags() {
-	exiftool -api largefilesupport=1 -overwrite_original -xmp:CountryCode="${COUNTRY_CODE}" -xmp:Country="${COUNTRY}" -xmp:State="${STATE}" -xmp:City="${CITY}" \
-	-xmp:Location="${SUBLOCATION}" -xmp:Title="${IDENTIFIER}_${TITLE_SUFFIX}" -xmp:Headline="${HEADLINE}" -xmp:Description="${DESCRIPTION}" \
-	-xmp:DateCreated="${DATE_CREATED}" -xmp:Creator="${CREATOR}" -xmp:Marked="True" -xmp:Rights="${COPYRIGHT}" \
-	$video_file &> /dev/null || error_exit "Could not update xmp core schema tags"
-}
+	if extension in ['.mov', '.mp4']:
+		meta_file = os.path.splitext(video_file)[0] + '_meta.json'
+		check_file_exists(meta_file)
 
-set_xmp_extension_schema_tags() {
-	exiftool -api largefilesupport=1 -overwrite_original -xmp:LocationShownCountryCode="${COUNTRY_CODE}" -xmp:LocationCreatedCountryCode="${COUNTRY_CODE}"  \
-	-xmp:LocationShownCountryName="${COUNTRY}" -xmp:LocationCreatedCountryName="${COUNTRY}" \
-	-xmp:LocationShownProvinceState="${STATE}" -xmp:LocationCreatedProvinceState="${STATE}" \
-	-xmp:LocationShownCity="${CITY}" -xmp:LocationCreatedCity="${CITY}" \
-	-xmp:LocationShownSublocation="${SUBLOCATION}" -xmp:LocationCreatedSublocation="${SUBLOCATION}" \
-	-xmp:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture" \
-	$video_file &> /dev/null || error_exit "Could not update xmp extension schema tags"
-}
+		# Load meta data from the meta file
+		with open(meta_file) as f:
+			meta_data = json.load(f)
 
-set_xmp_tiff_namespace_tags() {
-	exiftool -api largefilesupport=1 -overwrite_original -xmp:Model="${MODEL}" -xmp:Make="${MAKE}" -xmp:ImageDescription="${DESCRIPTION}" $video_file &> /dev/null || error_exit "Could not update xmp tiff namespace tags"
-}
+		# Load default meta data from a template file and overwrite the values with the values from default meta data file
+		template_file = "./zzz_meta_data_template.json"
+		if os.path.isfile(template_file):
+			with open(template_file) as f:
+				template_data = json.load(f)
+				meta_data.update(template_data)
 
+		gps = meta_data.get('GPS')
+		if gps:
+			commands = [
+				['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-UserData:GPSCoordinates={gps}', video_file],
+				['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-GPSCoordinates={gps}', video_file],
+			]
+			for cmd in commands:
+				result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+				if result.returncode != 0:
+					error_exit("Could not update GPS coordinates")
 
-set_meta_info(){
-
-	video_file=$1
-	meta_file=""
-
-	# Check if video file exists
-	check_file_exists $video_file
-
-	extension="${video_file##*.}"
-	extension="$(tr [A-Z] [a-z] <<< "$extension")"
-
-	# check if we are processing a quicktime or MP4 container
-	if [ "$extension" = "mov" ] || [ "$extension" = "mp4" ] ; then
-
-		# Create meta data file name
-		meta_file="${video_file%%.*}_meta.txt"
-
-		# Check if meta file exists and load variables
-		check_file_exists $meta_file
-		source $meta_file
-
-		# Load template file if it exists
-		if test -f "./zzz_meta_data_template.txt"; then
-			source "./zzz_meta_data_template.txt"
-		fi
-
-		# Set XMP Dynamic Media Tags
-		set_xmp_dm_tags
-
-		# Set XMP Core Schema Tags
-		set_xmp_core_schema_tags
-
-		# Set XMP Extension Schema Tags
-		set_xmp_extension_schema_tags
-
-		# Set XMP Tiff Namespace Tags
-		set_xmp_tiff_namespace_tags
-
-		# Set XMP Exif Schema Tags
-		set_xmp_exif_tags
+		# Additional exiftool commands would be implemented here
 		
-		# Set GPS coordinates
-		set_gps_coordinates
+		identifier = meta_data.get('IDENTIFIER', '')
+		titlesuffix = meta_data.get('TITLE_SUFFIX', 'asdf')
+		print(f"Identifier: {identifier}")
+		print(f"Title Suffix: {titlesuffix}")
+		new_video_file = f"{identifier}_{titlesuffix}{extension}"
+		if video_file != new_video_file:
+			os.rename(video_file, new_video_file)
 
-		# Rename movie data file
-		# Todo: Check if file name is the same and skip rename, otherwise there is an error
-		mv $video_file ${IDENTIFIER}_${TITLE_SUFFIX}.${extension}
+		new_meta_file = f"{identifier}_{titlesuffix}_meta.json"
+		if meta_file != new_meta_file:
+			os.rename(meta_file, new_meta_file)
 
-		# Rename meta file
-		# Todo: Check if file name is the same and skip rename, otherwise there is an error
-		mv $meta_file ./${IDENTIFIER}_${TITLE_SUFFIX}_meta.txt
+# Check if the exiftool command is available in the system
+if shutil.which('exiftool') is None:
+  error_exit("Exiftol command not found. Please install it before running this script.")
 
-	fi
+# Check if at least one video file is provided as a command-line argument
+if len(sys.argv) < 2:
+    error_exit("No video file specified. Please provide at least one video file as an argument.")
 
-}
-
-for movie_file in "$@"
-do
-    set_meta_info ${movie_file};
-done
+for movie_file in sys.argv[1:]:
+	set_meta_info(movie_file)

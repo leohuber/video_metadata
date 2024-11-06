@@ -25,7 +25,7 @@ def generate_metadata(video_file):
     model = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Model '{video_file}'")
 
     # Create meta data file name
-    meta_file = f"{os.path.splitext(video_file)[0]}_meta.txt"
+    meta_file = f"{os.path.splitext(video_file)[0]}_meta.json"
 
     # Try to extract the date & create an identifier
     DATE_CREATED = '2005:10:23 20:06:34.33-05:00 - DEFAULT'
@@ -103,7 +103,7 @@ def generate_metadata(video_file):
     }
 
     # Write metadata to a JSON file
-    with open(meta_file.replace('.txt', '.json'), 'w') as f:
+    with open(meta_file, 'w') as f:
         json.dump(metadata, f, indent=4)
 
 # Check if the exiftool command is available in the system
