@@ -22,7 +22,7 @@ set_codec_info(){
   extension="$(tr [A-Z] [a-z] <<< "$extension")"
   model=$(exiftool -q -q -b -api largefilesupport=1 -Model ${video_file})
 
-  # Create meta data file name
+  # Meta data file name
   meta_file="${video_file%%.*}_codec.txt"
 
   # Check if meta file exists and load variables
