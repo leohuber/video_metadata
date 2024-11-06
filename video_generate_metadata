@@ -63,6 +63,10 @@ def generate_metadata(video_file):
     # Extract other metadata
     MAKE = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Make '{video_file}'") or 'Apple - DEFAULT'
     MODEL = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Model '{video_file}'") or 'iPhone 11 Pro - DEFAULT'
+    SOURCE_IMAGE_HEIGHT = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -SourceImageHeight '{video_file}'")
+    SOURCE_IMAGE_WIDTH = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -SourceImageWidth '{video_file}'")
+    VIDEO_FRAME_RATE = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -VideoFrameRate '{video_file}'")
+    COMPRESSOR_NAME = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CompressorName '{video_file}'")
     GPS = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -GPSCoordinates '{video_file}'")
     if GPS:
         GPS = GPS.replace(' ', ', ')
@@ -89,6 +93,10 @@ def generate_metadata(video_file):
         "DATE_CREATED": DATE_CREATED,
         "MAKE": MAKE,
         "MODEL": MODEL,
+        "SOURCE_IMAGE_HEIGHT": SOURCE_IMAGE_HEIGHT,
+        "SOURCE_IMAGE_WIDTH": SOURCE_IMAGE_WIDTH,
+        "VIDEO_FRAME_RATE": VIDEO_FRAME_RATE,
+        "COMPRESSOR_NAME": COMPRESSOR_NAME,
         "GPS": GPS,
         "CREATOR": CREATOR,
         "COUNTRY_CODE": COUNTRY_CODE,
