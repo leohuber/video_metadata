@@ -4,6 +4,7 @@ import os
 import shutil
 import sys
 import subprocess
+import json
 
 def error_exit(message):
     print(message, file=sys.stderr)
@@ -82,24 +83,28 @@ def generate_metadata(video_file):
     DESCRIPTION = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Description '{video_file}'") or 'Description - DEFAULT'
     COPYRIGHT = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Rights '{video_file}'") or 'Leo Huber - DEFAULT'
 
-    # Write metadata to file
-    with open(meta_file, 'w') as f:
-        f.write(f"# Generated meta data file for video {video_file}\n\n")
-        f.write(f"IDENTIFIER='{IDENTIFIER}'\n\n")
-        f.write(f"DATE_CREATED='{DATE_CREATED}'\n\n")
-        f.write(f"MAKE='{MAKE}'\n")
-        f.write(f"MODEL='{MODEL}'\n")
-        f.write(f"GPS='{GPS}'\n\n")
-        f.write(f"CREATOR='{CREATOR}'\n")
-        f.write(f"COUNTRY_CODE='{COUNTRY_CODE}'\n")
-        f.write(f"COUNTRY='{COUNTRY}'\n")
-        f.write(f"STATE='{STATE}'\n")
-        f.write(f"CITY='{CITY}'\n")
-        f.write(f"SUBLOCATION='{SUBLOCATION}'\n\n")
-        f.write(f"HEADLINE='{HEADLINE}'\n")
-        f.write(f"TITLE_SUFFIX='{TITLE_SUFFIX}'\n")
-        f.write(f"DESCRIPTION='{DESCRIPTION}'\n")
-        f.write(f"COPYRIGHT='{COPYRIGHT}'\n")
+    # Create a dictionary to hold the metadata
+    metadata = {
+        "IDENTIFIER": IDENTIFIER,
+        "DATE_CREATED": DATE_CREATED,
+        "MAKE": MAKE,
+        "MODEL": MODEL,
+        "GPS": GPS,
+        "CREATOR": CREATOR,
+        "COUNTRY_CODE": COUNTRY_CODE,
+        "COUNTRY": COUNTRY,
+        "STATE": STATE,
+        "CITY": CITY,
+        "SUBLOCATION": SUBLOCATION,
+        "HEADLINE": HEADLINE,
+        "TITLE_SUFFIX": TITLE_SUFFIX,
+        "DESCRIPTION": DESCRIPTION,
+        "COPYRIGHT": COPYRIGHT
+    }
+
+    # Write metadata to a JSON file
+    with open(meta_file.replace('.txt', '.json'), 'w') as f:
+        json.dump(metadata, f, indent=4)
 
 # Check if the exiftool command is available in the system
 if shutil.which('exiftool') is None:
