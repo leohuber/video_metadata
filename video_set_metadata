@@ -34,12 +34,25 @@ def set_meta_info(video_file):
 				template_data = json.load(f)
 				meta_data.update(template_data)
 
+		identifier = meta_data.get('IDENTIFIER')
 		date_created = meta_data.get('DATE_CREATED')
+		make = meta_data.get('MAKE')
+		model = meta_data.get('MODEL')
 		source_image_height = meta_data.get('SOURCE_IMAGE_HEIGHT')
 		source_image_width = meta_data.get('SOURCE_IMAGE_WIDTH')
 		video_frame_rate = meta_data.get('VIDEO_FRAME_RATE')
 		compressor_name = meta_data.get('COMPRESSOR_NAME')
 		gps = meta_data.get('GPS')
+		creator = meta_data.get('CREATOR')
+		country_code = meta_data.get('COUNTRY_CODE')
+		country = meta_data.get('COUNTRY')
+		state = meta_data.get('STATE')
+		city = meta_data.get('CITY')
+		sublocation = meta_data.get('SUBLOCATION')
+		headline = meta_data.get('HEADLINE')
+		title_suffix = meta_data.get('TITLE_SUFFIX')
+		description = meta_data.get('DESCRIPTION')
+		copyright = meta_data.get('COPYRIGHT')
 
 		commands = []
 
@@ -68,8 +81,6 @@ def set_meta_info(video_file):
 				error_exit("Could not update metadata")
 		
 		# rename movie file
-		identifier = meta_data.get('IDENTIFIER', '')
-		title_suffix = meta_data.get('TITLE_SUFFIX', '')
 		new_video_file = f"{identifier}_{title_suffix}{extension}"
 		if video_file != new_video_file:
 			os.rename(video_file, new_video_file)
