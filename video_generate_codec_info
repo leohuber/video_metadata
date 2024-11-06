@@ -115,8 +115,7 @@ def generate_codec_info(video_file):
     ]
     audio_fields = [field for field in audio_fields if field.split('=')[1]]
     if audio_fields:
-      f.write(f"Audio: {', '.join(audio_fields)}\n")
-
+      f.write(f"Audio: {', '.join(audio_fields)}")
     f.write("'")
 
 if shutil.which('mediainfo') is None:
