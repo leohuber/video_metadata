@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import shutil
 import sys
 import subprocess
 
@@ -100,6 +101,13 @@ def generate_metadata(video_file):
         f.write(f"DESCRIPTION='{DESCRIPTION}'\n")
         f.write(f"COPYRIGHT='{COPYRIGHT}'\n")
 
-if __name__ == "__main__":
-    for movie_file in sys.argv[1:]:
-        generate_metadata(movie_file)
+# Check if the exiftool command is available in the system
+if shutil.which('exiftool') is None:
+  error_exit("Exiftol command not found. Please install it before running this script.")
+
+# Check if at least one video file is provided as a command-line argument
+if len(sys.argv) < 2:
+    error_exit("No video file specified. Please provide at least one video file as an argument.")
+
+for movie_file in sys.argv[1:]:
+    generate_metadata(movie_file)
