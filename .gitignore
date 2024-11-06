@@ -6,6 +6,7 @@
 *.TXT
 *.mts
 *.MTS
+*.json
 **/.DS_Store
 **/meta/*.txt
 **/install_test_footage
