@@ -3,6 +3,7 @@
 import sys
 import os
 import subprocess
+import shutil
 
 def error_exit(message):
   print(message, file=sys.stderr)
@@ -118,11 +119,10 @@ def generate_codec_info(video_file):
 
     f.write("'")
 
-def main():
-  if len(sys.argv) < 2:
-    error_exit("Usage: script.py <video_file1> <video_file2> ...")
-  for video_file in sys.argv[1:]:
-    generate_codec_info(video_file)
+if shutil.which('mediainfo') is None:
+  error_exit("Mediainfo command not found. Please install it before running this script.")
 
-if __name__ == "__main__":
-  main()
+if len(sys.argv) < 2:
+  error_exit("Usage: script.py <video_file1> <video_file2> ...")
+for video_file in sys.argv[1:]:
+  generate_codec_info(video_file)
