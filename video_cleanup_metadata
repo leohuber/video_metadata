@@ -2,11 +2,11 @@
 import glob
 import os
 
-print("Starting the cleanup process of metadate .txt files ...")
+print("Starting the cleanup process of metadate .json files ...")
 
-# Use glob to find all .txt files in the current directory
-txt_files = glob.glob('./*.txt')
-print(f"Found {len(txt_files)} .txt files to remove.")
+# Use glob to find all .json files in the current directory
+txt_files = glob.glob('./*.json')
+print(f"Found {len(txt_files)} .json files to remove.")
 
 # Loop through each file path found
 for file_path in txt_files:

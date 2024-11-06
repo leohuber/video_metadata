@@ -4,6 +4,7 @@ import sys
 import os
 import subprocess
 import shutil
+import json
 
 def error_exit(message):
   print(message, file=sys.stderr)
@@ -20,103 +21,103 @@ def get_mediainfo(video_file, stream, parameter):
 
 def generate_codec_info(video_file):
   check_file_exists(video_file)
-  codec_info_file = f"{os.path.splitext(video_file)[0]}_codec.txt"
+  codec_info_file = f"{os.path.splitext(video_file)[0]}_codec.json"
+
+  codec_info = {}
+
+  # Format
+  format_fields = [
+    get_mediainfo(video_file, 'Video', 'Format'),
+    get_mediainfo(video_file, 'Video', 'Format/Info'),
+    get_mediainfo(video_file, 'Video', 'Format_Profile'),
+    get_mediainfo(video_file, 'Video', 'Format_Settings')
+  ]
+  format_fields = [field for field in format_fields if field]
+  if format_fields:
+    codec_info['format_fields'] = f"Format: {', '.join(format_fields)}"
+
+  # HDR Format
+  hdr_format = get_mediainfo(video_file, 'Video', 'HDR_Format/String')
+  if hdr_format:
+    codec_info['hdr_format'] = f"HDR Format: {', '.join(hdr_format)}"
+
+  # Pixel Format
+  pixel_fields = [
+    f"ColorSpace={get_mediainfo(video_file, 'Video', 'ColorSpace')}",
+    f"ChromaSubsampling={get_mediainfo(video_file, 'Video', 'ChromaSubsampling/String')}",
+    f"BitDepth={get_mediainfo(video_file, 'Video', 'BitDepth/String')}"
+  ]
+  pixel_fields = [field for field in pixel_fields if field.split('=')[1]]
+  if pixel_fields:
+    codec_info['pixel_format'] = f"Pixel Format: {', '.join(pixel_fields)}"
+
+  # Frame Rate
+  framerate_fields = [
+    f"Mode={get_mediainfo(video_file, 'Video', 'FrameRate_Mode')}",
+    f"Rate={get_mediainfo(video_file, 'Video', 'FrameRate')}",
+    f"Min={get_mediainfo(video_file, 'Video', 'FrameRate_Minimum')}",
+    f"Max={get_mediainfo(video_file, 'Video', 'FrameRate_Maximum')}"
+  ]
+  framerate_fields = [field for field in framerate_fields if field.split('=')[1]]
+  if framerate_fields:
+    codec_info['framerate_fields'] = f"Frame Rate: {', '.join(framerate_fields)}"
+
+  # Scan Type
+  scan_fields = [
+    f"Type={get_mediainfo(video_file, 'Video', 'ScanType')}",
+    f"StoreMethod={get_mediainfo(video_file, 'Video', 'ScanType_StoreMethod')}",
+    f"ScanOrder={get_mediainfo(video_file, 'Video', 'ScanOrder/String')}"
+  ]
+  scan_fields = [field for field in scan_fields if field.split('=')[1]]
+  if scan_fields:
+    codec_info['scan_fields'] = f"Scan Type: {', '.join(scan_fields)}"
+
+  # Bit Rate
+  bitrate_fields = [
+    f"Mode={get_mediainfo(video_file, 'Video', 'BitRate_Mode')}",
+    f"Rate={get_mediainfo(video_file, 'Video', 'BitRate/String')}",
+    f"Min={get_mediainfo(video_file, 'Video', 'BitRate_Minimum/String')}",
+    f"Max={get_mediainfo(video_file, 'Video', 'BitRate_Maximum/String')}"
+  ]
+  bitrate_fields = [field for field in bitrate_fields if field.split('=')[1]]
+  if bitrate_fields:
+    codec_info['bitrate_fields'] = f"Bit Rate: {', '.join(bitrate_fields)}"
+  
+  # Color
+  color_fields = [
+    f"Primaries={get_mediainfo(video_file, 'Video', 'colour_primaries')}",
+    f"TransferCharacteristics={get_mediainfo(video_file, 'Video', 'transfer_characteristics')}",
+    f"MatrixCoefficients={get_mediainfo(video_file, 'Video', 'matrix_coefficients')}"
+  ]
+  color_fields = [field for field in color_fields if field.split('=')[1]]
+  if color_fields:
+    codec_info['color_fields'] = f"Color: {', '.join(color_fields)}"
+
+  # Dimensions
+  dimension_fields = [
+    f"Height={get_mediainfo(video_file, 'Video', 'Height')}",
+    f"Width={get_mediainfo(video_file, 'Video', 'Width')}",
+    f"AspectRatio={get_mediainfo(video_file, 'Video', 'DisplayAspectRatio/String')}",
+    f"Rotation={get_mediainfo(video_file, 'Video', 'Rotation')}"
+  ]
+  dimension_fields = [field for field in dimension_fields if field.split('=')[1]]
+  if dimension_fields:
+    codec_info['dimension_fields'] = f"Dimensions: {', '.join(dimension_fields)}"
+
+  # Audio
+  audio_fields = [
+    f"Format={get_mediainfo(video_file, 'Audio', 'Format')}",
+    f"BitRate={get_mediainfo(video_file, 'Audio', 'BitRate/String')}",
+    f"SamplingRate={get_mediainfo(video_file, 'Audio', 'SamplingRate/String')}",
+    f"Channels={get_mediainfo(video_file, 'Audio', 'Channel(s)')}",
+    f"Layout={get_mediainfo(video_file, 'Audio', 'ChannelLayout')}"
+  ]
+  audio_fields = [field for field in audio_fields if field.split('=')[1]]
+  if audio_fields:
+    codec_info['audio_fields'] = f"Audio: {', '.join(audio_fields)}"
 
   with open(codec_info_file, 'w') as f:
-    f.write(f"# Generated mediainfo data file for video {video_file}\n\n")
-    f.write("COMMENT='")
-
-    # Format
-    format_fields = [
-      get_mediainfo(video_file, 'Video', 'Format'),
-      get_mediainfo(video_file, 'Video', 'Format/Info'),
-      get_mediainfo(video_file, 'Video', 'Format_Profile'),
-      get_mediainfo(video_file, 'Video', 'Format_Settings')
-    ]
-    format_fields = [field for field in format_fields if field]
-    if format_fields:
-      f.write(f"Format: {', '.join(format_fields)}\n")
-
-    # HDR Format
-    hdr_format = get_mediainfo(video_file, 'Video', 'HDR_Format/String')
-    if hdr_format:
-      f.write(f"HDR Format: {hdr_format}\n")
-
-    # Pixel Format
-    pixel_fields = [
-      f"ColorSpace={get_mediainfo(video_file, 'Video', 'ColorSpace')}",
-      f"ChromaSubsampling={get_mediainfo(video_file, 'Video', 'ChromaSubsampling/String')}",
-      f"BitDepth={get_mediainfo(video_file, 'Video', 'BitDepth/String')}"
-    ]
-    pixel_fields = [field for field in pixel_fields if field.split('=')[1]]
-    if pixel_fields:
-      f.write(f"Pixel Format: {', '.join(pixel_fields)}\n")
-
-    # Frame Rate
-    framerate_fields = [
-      f"Mode={get_mediainfo(video_file, 'Video', 'FrameRate_Mode')}",
-      f"Rate={get_mediainfo(video_file, 'Video', 'FrameRate')}",
-      f"Min={get_mediainfo(video_file, 'Video', 'FrameRate_Minimum')}",
-      f"Max={get_mediainfo(video_file, 'Video', 'FrameRate_Maximum')}"
-    ]
-    framerate_fields = [field for field in framerate_fields if field.split('=')[1]]
-    if framerate_fields:
-      f.write(f"Frame Rate: {', '.join(framerate_fields)}\n")
-
-    # Scan Type
-    scan_fields = [
-      f"Type={get_mediainfo(video_file, 'Video', 'ScanType')}",
-      f"StoreMethod={get_mediainfo(video_file, 'Video', 'ScanType_StoreMethod')}",
-      f"ScanOrder={get_mediainfo(video_file, 'Video', 'ScanOrder/String')}"
-    ]
-    scan_fields = [field for field in scan_fields if field.split('=')[1]]
-    if scan_fields:
-      f.write(f"Scan Type: {', '.join(scan_fields)}\n")
-
-    # Bit Rate
-    bitrate_fields = [
-      f"Mode={get_mediainfo(video_file, 'Video', 'BitRate_Mode')}",
-      f"Rate={get_mediainfo(video_file, 'Video', 'BitRate/String')}",
-      f"Min={get_mediainfo(video_file, 'Video', 'BitRate_Minimum/String')}",
-      f"Max={get_mediainfo(video_file, 'Video', 'BitRate_Maximum/String')}"
-    ]
-    bitrate_fields = [field for field in bitrate_fields if field.split('=')[1]]
-    if bitrate_fields:
-      f.write(f"Bit Rate: {', '.join(bitrate_fields)}\n")
-
-    # Color
-    color_fields = [
-      f"Primaries={get_mediainfo(video_file, 'Video', 'colour_primaries')}",
-      f"TransferCharacteristics={get_mediainfo(video_file, 'Video', 'transfer_characteristics')}",
-      f"MatrixCoefficients={get_mediainfo(video_file, 'Video', 'matrix_coefficients')}"
-    ]
-    color_fields = [field for field in color_fields if field.split('=')[1]]
-    if color_fields:
-      f.write(f"Color: {', '.join(color_fields)}\n")
-
-    # Dimensions
-    dimension_fields = [
-      f"Height={get_mediainfo(video_file, 'Video', 'Height')}",
-      f"Width={get_mediainfo(video_file, 'Video', 'Width')}",
-      f"AspectRatio={get_mediainfo(video_file, 'Video', 'DisplayAspectRatio/String')}",
-      f"Rotation={get_mediainfo(video_file, 'Video', 'Rotation')}"
-    ]
-    dimension_fields = [field for field in dimension_fields if field.split('=')[1]]
-    if dimension_fields:
-      f.write(f"Dimensions: {', '.join(dimension_fields)}\n")
-
-    # Audio
-    audio_fields = [
-      f"Format={get_mediainfo(video_file, 'Audio', 'Format')}",
-      f"BitRate={get_mediainfo(video_file, 'Audio', 'BitRate/String')}",
-      f"SamplingRate={get_mediainfo(video_file, 'Audio', 'SamplingRate/String')}",
-      f"Channels={get_mediainfo(video_file, 'Audio', 'Channel(s)')}",
-      f"Layout={get_mediainfo(video_file, 'Audio', 'ChannelLayout')}"
-    ]
-    audio_fields = [field for field in audio_fields if field.split('=')[1]]
-    if audio_fields:
-      f.write(f"Audio: {', '.join(audio_fields)}")
-    f.write("'")
+    json.dump(codec_info, f, indent=4)
 
 # Check if mediainfo command is available
 if shutil.which('mediainfo') is None:
