@@ -10,7 +10,7 @@ print(f"Found {len(txt_files)} .txt files to remove.")
 
 # Loop through each file path found
 for file_path in txt_files:
-    print("Removing file: {file_path}")
+    print(f"Removing file: {file_path}")
     os.remove(file_path)
 
 print("Cleanup process completed.")
