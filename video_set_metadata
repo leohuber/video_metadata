@@ -137,7 +137,7 @@ def set_meta_info(video_file):
 				   f'-xmp:LocationShownCity={city}',
 				   f'-xmp:LocationCreatedCity={city}',
 				   f'-xmp:LocationShownSublocation={sublocation}',
-				   f'-xmp:LocationCreatedCity={sublocation}',
+				   f'-xmp:LocationCreatedSublocation={sublocation}',
 				   f'-xmp:DigitalSourceType=http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture',
 				   video_file])
 		
