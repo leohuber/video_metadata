@@ -45,17 +45,17 @@ def set_meta_info(video_file):
 				if result.returncode != 0:
 					error_exit("Could not update GPS coordinates")
 
-		# Additional exiftool commands would be implemented here
+		# TODO: Additional exiftool commands would be implemented here
 		
 		identifier = meta_data.get('IDENTIFIER', '')
-		titlesuffix = meta_data.get('TITLE_SUFFIX', 'asdf')
+		title_suffix = meta_data.get('TITLE_SUFFIX', '')
 		print(f"Identifier: {identifier}")
-		print(f"Title Suffix: {titlesuffix}")
-		new_video_file = f"{identifier}_{titlesuffix}{extension}"
+		print(f"Title Suffix: {title_suffix}")
+		new_video_file = f"{identifier}_{title_suffix}{extension}"
 		if video_file != new_video_file:
 			os.rename(video_file, new_video_file)
 
-		new_meta_file = f"{identifier}_{titlesuffix}_meta.json"
+		new_meta_file = f"{identifier}_{title_suffix}_meta.json"
 		if meta_file != new_meta_file:
 			os.rename(meta_file, new_meta_file)
 
