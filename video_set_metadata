@@ -15,6 +15,9 @@ def check_file_exists(file_path):
 		error_exit(f"Could not find file: {file_path}")
 
 def set_meta_info(video_file):
+
+	print(f"Processing file: {video_file}")
+
 	check_file_exists(video_file)
 
 	extension = os.path.splitext(video_file)[1].lower()
@@ -86,6 +89,21 @@ def set_meta_info(video_file):
 		source_image_width = meta_data.get('SOURCE_IMAGE_WIDTH')
 		video_frame_rate = meta_data.get('VIDEO_FRAME_RATE')
 		compressor_name = meta_data.get('COMPRESSOR_NAME')
+		if gps is not None:
+			if isinstance(gps, str) and 'default' in gps.lower():
+				error_exit(f"Invalid value for GPS: {gps}")
+		if source_image_height is not None:
+			if isinstance(source_image_height, str) and 'default' in source_image_height.lower():
+				error_exit(f"Invalid value for SOURCE_IMAGE_HEIGHT: {source_image_height}")
+		if source_image_width is not None:
+			if isinstance(source_image_width, str) and 'default' in source_image_width.lower():
+				error_exit(f"Invalid value for SOURCE_IMAGE_WIDTH: {source_image_width}")
+		if video_frame_rate is not None:
+			if isinstance(video_frame_rate, str) and 'default' in video_frame_rate.lower():
+				error_exit(f"Invalid value for VIDEO_FRAME_RATE: {video_frame_rate}")
+		if compressor_name is not None:
+			if isinstance(compressor_name, str) and 'default' in compressor_name.lower():
+				error_exit(f"Invalid value for COMPRESSOR_NAME: {compressor_name}")
 
 		commands = []
 
