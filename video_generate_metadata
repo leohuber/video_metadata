@@ -5,6 +5,7 @@ import shutil
 import sys
 import subprocess
 import json
+from video_slibrary_metadata_utils import get_date_created_and_identifier
 
 def error_exit(message):
     print(message, file=sys.stderr)
@@ -30,38 +31,10 @@ def generate_metadata(video_file):
     # Create meta data file name
     meta_file = f"{os.path.splitext(video_file)[0]}_meta.json"
 
-    # Try to extract the date & create an identifier
-    DATE_CREATED = '2005:10:23 20:06:34.33-05:00 - DEFAULT'
-    IDENTIFIER = '20051023_200634 - DEFAULT'
-
-    # Check if we are processing a QuickTime container
-    if extension == "mov":
-        # Try to get CreationDate
-        datec = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CreationDate '{video_file}'")
-        if datec:
-            DATE_CREATED = datec
-            IDENTIFIER = DATE_CREATED[:19].replace(' ', '_').replace(':', '')
-        else:
-            # Try to get CreateDate
-            datec = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CreateDate '{video_file}'")
-            if datec:
-                DATE_CREATED = datec
-                IDENTIFIER = DATE_CREATED[:19].replace(' ', '_').replace(':', '')
-
-    # Check if we are processing an MP4 container
-    if extension == "mp4":
-        if model == "Canon EOS R6":
-            # Get SubSecCreateDate for Canon R6
-            datec = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -SubSecCreateDate '{video_file}'")
-            if datec:
-                DATE_CREATED = datec
-                IDENTIFIER = DATE_CREATED[:19].replace(' ', '_').replace(':', '')
-        else:
-            # Try to get CreateDate
-            datec = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CreateDate '{video_file}'")
-            if datec:
-                DATE_CREATED = datec
-                IDENTIFIER = DATE_CREATED[:19].replace(' ', '_').replace(':', '')
+    DATE_CREATED, IDENTIFIER = get_date_created_and_identifier(video_file, extension, model)
+    
+    if DATE_CREATED is None or IDENTIFIER is None:
+        error_exit("DATE_CREATED or IDENTIFIER is None. Exiting.")
 
     # Extract other metadata
     MAKE = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Make '{video_file}'") or 'Apple - DEFAULT'

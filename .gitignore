@@ -7,6 +7,7 @@
 *.mts
 *.MTS
 *.json
+*.pyc
 **/.DS_Store
 **/meta/*.txt
 **/install_test_footage
