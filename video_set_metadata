@@ -122,11 +122,6 @@ def set_meta_info(video_file):
 				   f'-xmp:Rights={copyright}',
 				   video_file])
 
-
-		#exiftool -api largefilesupport=1 -overwrite_original -xmp:CountryCode="${COUNTRY_CODE}" -xmp:Country="${COUNTRY}" -xmp:State="${STATE}" -xmp:City="${CITY}" \
-		#-xmp:Location="${SUBLOCATION}" -xmp:Title="${IDENTIFIER}_${TITLE_SUFFIX}" -xmp:Headline="${HEADLINE}" -xmp:Description="${DESCRIPTION}" \
-		#-xmp:DateCreated="${DATE_CREATED}" -xmp:Creator="${CREATOR}" -xmp:Marked="True" -xmp:Rights="${COPYRIGHT}" \
-
 		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
 				   f'-xmp:LocationShownCountryCode={country_code}',
 				   f'-xmp:LocationCreatedCountryCode={country_code}',
@@ -140,22 +135,12 @@ def set_meta_info(video_file):
 				   f'-xmp:LocationCreatedSublocation={sublocation}',
 				   f'-xmp:DigitalSourceType=http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture',
 				   video_file])
-		
-		#exiftool -api largefilesupport=1 -overwrite_original -xmp:LocationShownCountryCode="${COUNTRY_CODE}" -xmp:LocationCreatedCountryCode="${COUNTRY_CODE}"  \
-		#-xmp:LocationShownCountryName="${COUNTRY}" -xmp:LocationCreatedCountryName="${COUNTRY}" \
-		#-xmp:LocationShownProvinceState="${STATE}" -xmp:LocationCreatedProvinceState="${STATE}" \
-		#-xmp:LocationShownCity="${CITY}" -xmp:LocationCreatedCity="${CITY}" \
-		#-xmp:LocationShownSublocation="${SUBLOCATION}" -xmp:LocationCreatedSublocation="${SUBLOCATION}" \
-		#-xmp:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture" \
-		#$video_file &> /dev/null || error_exit "Could not update xmp extension schema tags"
 
 		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
 				   f'-xmp:Model={model}',
 				   f'-xmp:Make={make}',
 				   f'-xmp:ImageDescription={description}',
 				   video_file])
-
-		#exiftool -api largefilesupport=1 -overwrite_original -xmp:Model="${MODEL}" -xmp:Make="${MAKE}" -xmp:ImageDescription="${DESCRIPTION}" $video_file &> /dev/null || error_exit "Could not update xmp tiff namespace tags"
 
 		for cmd in commands:
 			result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
