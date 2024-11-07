@@ -16,6 +16,9 @@ def check_file_exists(file_path):
         error_exit(f"Could not find file: {file_path}")
 
 def generate_date_filename(video_file):
+
+    print(f"Processing file: {video_file}")
+
     check_file_exists(video_file)
 
     # Extracts the file extension from the given video file name, converts it to lowercase, and stores it in the variable 'extension'.
