@@ -4,6 +4,7 @@ import shutil
 import sys
 import os
 import subprocess
+from video_slibrary_metadata_utils import get_date_created_and_identifier
 
 def error_exit(message):
     # Prints an error message to the standard error stream and exits the script with a status code of 1.
@@ -34,49 +35,20 @@ def generate_date_filename(video_file):
     identifier = None
     destination_file = None
 
+    date_created, identifier = get_date_created_and_identifier(video_file, extension, model)
+    
+    if date_created is None or identifier is None:
+        error_exit("date_created or identifier is None. Exiting.")
+
+    identifier = date_created[:19].replace(' ', '_').replace(':', '')
+    destination_file = None
+
     if extension == "mov":
-        date_created = None
-        for tag in ['CreationDate', 'CreateDate']:
-            result = subprocess.run(
-            ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', f'-{tag}', video_file],
-            stdout=subprocess.PIPE, text=True
-            )
-            datec = result.stdout.strip()
-            if datec:
-                date_created = datec
-                break
-        if date_created:
-            identifier = date_created[:19].replace(' ', '_').replace(':', '')
-            destination_file = f"{identifier}.mov"
-        else:
-            print("Could not extract date information for MOV file.")
-
-    elif extension == "mp4" and model == "Canon EOS R6":
-        result = subprocess.run(
-            ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', '-CreateDate', video_file],
-            stdout=subprocess.PIPE, text=True
-        )
-        datec = result.stdout.strip()
-        if datec:
-            date_created = datec
-            identifier = date_created[:19].replace(' ', '_').replace(':', '')
-            destination_file = f"{identifier}.mp4"
-            print(f"Extracted date information for Canon EOS R6 MP4 file: {date_created}")
-        else:
-            print("Could not extract date information for Canon EOS R6 MP4 file.")
-
-    elif extension == "mts" and model in ["ILCE-7", "HDR-CX550VE"]:
-        result = subprocess.run(
-            ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', '-DateTimeOriginal', video_file],
-            stdout=subprocess.PIPE, text=True
-        )
-        datec = result.stdout.strip()
-        if datec:
-            date_created = datec
-            identifier = date_created[:19].replace(' ', '_').replace(':', '')
-            destination_file = f"{identifier}.mts"
-        else:
-            print("Could not extract date information for MTS file.")
+        destination_file = f"{identifier}.mov"
+    elif extension == "mp4":
+        destination_file = f"{identifier}.mp4"
+    elif extension == "mts":
+        destination_file = f"{identifier}.mts"
     
     if destination_file:
         if os.path.abspath(video_file) == os.path.abspath(destination_file):

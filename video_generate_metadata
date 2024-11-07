@@ -34,7 +34,7 @@ def generate_metadata(video_file):
     DATE_CREATED, IDENTIFIER = get_date_created_and_identifier(video_file, extension, model)
     
     if DATE_CREATED is None or IDENTIFIER is None:
-        error_exit("DATE_CREATED or IDENTIFIER is None. Exiting.")
+        error_exit("date_created or identifier is None. Exiting.")
 
     # Extract other metadata
     MAKE = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Make '{video_file}'") or 'Apple - DEFAULT'
