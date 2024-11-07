@@ -15,6 +15,9 @@ def check_file_exists(filename):
         error_exit(f"Could not find file: {filename}")
 
 def generate_metadata(video_file):
+
+    print(f"Processing file: {video_file}")
+
     # Check if video file exists
     check_file_exists(video_file)
 
@@ -110,7 +113,12 @@ def generate_metadata(video_file):
         ("COPYRIGHT", COPYRIGHT),
     ]
 
-    metadata = {key: value for key, value in metadata_fields if value}
+    metadata = {}
+    for key, value in metadata_fields:
+        if value and value != '':
+            metadata[key] = value
+        else:
+            print(f"Skipping {key} as it has an empty value")
 
     # Write metadata to a JSON file
     with open(meta_file, 'w') as f:
