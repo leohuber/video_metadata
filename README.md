@@ -1,4 +1,4 @@
-# Photo & Video MetaData
+# Video MetaData
 Scripts for managing meta data for video files
 
 ## Requirements
