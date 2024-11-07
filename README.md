@@ -5,6 +5,25 @@ Scripts for managing meta data for video files
 * Install Media Info CLI from https://mediaarea.net/en/MediaInfo
 * Install Exiftool from https://exiftool.org
 
+## Exiftool Group Names
+ExifTool uses group names to categorize metadata tags based on their location and context. Groups are organized into families, and each group has a name that helps identify where a tag comes from.
+
+### Group Families:
+
+- Family 0 (General Location): Broad categories like EXIF, IPTC, XMP.
+- Family 1 (Specific Location): More specific namespaces or schemas within the general category, like XMP-dc, XMP-xmp.
+
+### Differences Between XMP and XMP-dc
+XMP Group:
+- Represents: The overall XMP metadata block in the file.
+- Group Family: 0 (General Location).
+- Usage: When you reference XMP, you're addressing the XMP metadata as a whole without specifying a particular schema.
+
+XMP-dc Group:
+- Represents: The Dublin Core schema within XMP.
+- Group Family: 1 (Specific Location).
+- Usage: When you specify XMP-dc, you're targeting the dc (Dublin Core) schema specifically.
+
 ## Exiftool Command Line Arguments
 
 ### General Options
@@ -13,6 +32,8 @@ Scripts for managing meta data for video files
 - `-b`: Output data in binary format.
 - `-api largefilesupport=1`: Enables support for large files.
 - `-overwrite_original`: Overwrites the original file with the new metadata.
+- `-a`: Allow duplicate tag names in the output.
+- `-G0:1`: Print family 0 and family 1 group name for each tag.
 
 ### Date and Time
 - `-CreateDate`: Extracts the creation date of the file.
@@ -27,7 +48,7 @@ Scripts for managing meta data for video files
 - `-xmp:Model`: Sets the XMP model tag.
 - `-xmp:Make`: Sets the XMP make tag.
 
-### GPS Information
+### Location Information
 - `-GPSCoordinates`: Extracts the GPS coordinates.
 - `-UserData:GPSCoordinates`: Sets the GPS coordinates in the user data.
 - `-xmp:LocationShownCountryCode`: Sets the XMP location shown country code tag.
