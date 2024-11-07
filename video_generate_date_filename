@@ -73,7 +73,11 @@ def generate_date_filename(video_file):
         if datec:
             date_created = datec
             identifier = date_created[:19].replace(' ', '_').replace(':', '')
-            shutil.copy(video_file, f"{identifier}.mts")
+            destination_file = f"{identifier}.mts"
+            if os.path.abspath(video_file) == os.path.abspath(destination_file):
+                print("Source and destination files are the same. Aborting to prevent overwriting.")
+            else:
+                shutil.copy(video_file, destination_file)
 
     # Create backup directory if it doesn't exist
     backup_dir = os.path.join(os.path.dirname(video_file), "backup")
