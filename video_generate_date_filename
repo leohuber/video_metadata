@@ -35,24 +35,21 @@ def generate_date_filename(video_file):
     destination_file = None
 
     if extension == "mov":
-        result = subprocess.run(
-            ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', '-CreationDate', video_file],
-            stdout=subprocess.PIPE, text=True
-        )
-        datec = result.stdout.strip()
-        if datec:
-            date_created = datec
-        else:
+        date_created = None
+        for tag in ['CreationDate', 'CreateDate']:
             result = subprocess.run(
-                ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', '-CreateDate', video_file],
-                stdout=subprocess.PIPE, text=True
+            ['exiftool', '-q', '-q', '-b', '-api', 'largefilesupport=1', f'-{tag}', video_file],
+            stdout=subprocess.PIPE, text=True
             )
             datec = result.stdout.strip()
             if datec:
                 date_created = datec
+                break
         if date_created:
             identifier = date_created[:19].replace(' ', '_').replace(':', '')
             destination_file = f"{identifier}.mov"
+        else:
+            print("Could not extract date information for MOV file.")
 
     elif extension == "mp4" and model == "Canon EOS R6":
         result = subprocess.run(
@@ -78,6 +75,8 @@ def generate_date_filename(video_file):
             date_created = datec
             identifier = date_created[:19].replace(' ', '_').replace(':', '')
             destination_file = f"{identifier}.mts"
+        else:
+            print("Could not extract date information for MTS file.")
     
     if destination_file:
         if os.path.abspath(video_file) == os.path.abspath(destination_file):
