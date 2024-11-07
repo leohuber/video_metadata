@@ -88,27 +88,29 @@ def generate_metadata(video_file):
     COPYRIGHT = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Rights '{video_file}'") or 'Leo Huber - DEFAULT'
 
     # Create a dictionary to hold the metadata
-    metadata = {
-        "IDENTIFIER": IDENTIFIER,
-        "DATE_CREATED": DATE_CREATED,
-        "MAKE": MAKE,
-        "MODEL": MODEL,
-        "SOURCE_IMAGE_HEIGHT": SOURCE_IMAGE_HEIGHT,
-        "SOURCE_IMAGE_WIDTH": SOURCE_IMAGE_WIDTH,
-        "VIDEO_FRAME_RATE": VIDEO_FRAME_RATE,
-        "COMPRESSOR_NAME": COMPRESSOR_NAME,
-        "GPS": GPS,
-        "CREATOR": CREATOR,
-        "COUNTRY_CODE": COUNTRY_CODE,
-        "COUNTRY": COUNTRY,
-        "STATE": STATE,
-        "CITY": CITY,
-        "SUBLOCATION": SUBLOCATION,
-        "HEADLINE": HEADLINE,
-        "TITLE_SUFFIX": TITLE_SUFFIX,
-        "DESCRIPTION": DESCRIPTION,
-        "COPYRIGHT": COPYRIGHT
-    }
+    metadata_fields = [
+        ("IDENTIFIER", IDENTIFIER),
+        ("DATE_CREATED", DATE_CREATED),
+        ("MAKE", MAKE),
+        ("MODEL", MODEL),
+        ("SOURCE_IMAGE_HEIGHT", SOURCE_IMAGE_HEIGHT),
+        ("SOURCE_IMAGE_WIDTH", SOURCE_IMAGE_WIDTH),
+        ("VIDEO_FRAME_RATE", VIDEO_FRAME_RATE),
+        ("COMPRESSOR_NAME", COMPRESSOR_NAME),
+        ("GPS", GPS),
+        ("CREATOR", CREATOR),
+        ("COUNTRY_CODE", COUNTRY_CODE),
+        ("COUNTRY", COUNTRY),
+        ("STATE", STATE),
+        ("CITY", CITY),
+        ("SUBLOCATION", SUBLOCATION),
+        ("HEADLINE", HEADLINE),
+        ("TITLE_SUFFIX", TITLE_SUFFIX),
+        ("DESCRIPTION", DESCRIPTION),
+        ("COPYRIGHT", COPYRIGHT),
+    ]
+
+    metadata = {key: value for key, value in metadata_fields if value}
 
     # Write metadata to a JSON file
     with open(meta_file, 'w') as f:
