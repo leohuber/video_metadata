@@ -49,7 +49,7 @@ def set_meta_info(video_file):
 		city = meta_data.get('CITY')
 		sublocation = meta_data.get('SUBLOCATION')
 		headline = meta_data.get('HEADLINE')
-		title_suffix = meta_data.get('TITLE_SUFFIX')
+		title_suffix = meta_data.get('TITLE_SUFFIX').lower()
 		description = meta_data.get('DESCRIPTION')
 		copyright = meta_data.get('COPYRIGHT')
 
