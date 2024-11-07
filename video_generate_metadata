@@ -31,59 +31,59 @@ def generate_metadata(video_file):
     # Create meta data file name
     meta_file = f"{os.path.splitext(video_file)[0]}_meta.json"
 
-    DATE_CREATED, IDENTIFIER = get_date_created_and_identifier(video_file, extension, model)
+    date_created, identifier = get_date_created_and_identifier(video_file, extension, model)
     
-    if DATE_CREATED is None or IDENTIFIER is None:
+    if date_created is None or identifier is None:
         error_exit("date_created or identifier is None. Exiting.")
 
     # Extract other metadata
-    MAKE = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Make '{video_file}'") or 'Apple - DEFAULT'
-    MODEL = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Model '{video_file}'") or 'iPhone 11 Pro - DEFAULT'
-    SOURCE_IMAGE_HEIGHT = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -SourceImageHeight '{video_file}'")
-    SOURCE_IMAGE_WIDTH = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -SourceImageWidth '{video_file}'")
-    VIDEO_FRAME_RATE = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -VideoFrameRate '{video_file}'")
-    COMPRESSOR_NAME = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CompressorName '{video_file}'")
-    GPS = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -GPSCoordinates '{video_file}'")
-    if GPS:
-        GPS = GPS.replace(' ', ', ')
+    make = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Make '{video_file}'") or 'Apple - DEFAULT'
+    model = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Model '{video_file}'") or 'iPhone 11 Pro - DEFAULT'
+    source_image_height = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -SourceImageHeight '{video_file}'")
+    source_image_width = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -SourceImageWidth '{video_file}'")
+    video_frame_rate = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -VideoFrameRate '{video_file}'")
+    compressor_name = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CompressorName '{video_file}'")
+    gps = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -GPSCoordinates '{video_file}'")
+    if gps:
+        gps = gps.replace(' ', ', ')
     else:
-        GPS = '-35.2975906, 149.1012676, 554 - DEFAULT'
-    COUNTRY_CODE = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CountryCode '{video_file}'") or 'CHE - DEFAULT'
-    COUNTRY = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Country '{video_file}'") or 'Switzerland - DEFAULT'
-    CREATOR = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Creator '{video_file}'") or 'Leo Huber - DEFAULT'
-    STATE = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -State '{video_file}'") or 'Zurich - DEFAULT'
-    CITY = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -City '{video_file}'") or 'Zurich - DEFAULT'
-    SUBLOCATION = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Location '{video_file}'") or 'Sublocation - DEFAULT'
-    HEADLINE = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Headline '{video_file}'") or 'Headline - DEFAULT'
-    TITLE_SUFFIX = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Title '{video_file}'")
-    if TITLE_SUFFIX:
-        TITLE_SUFFIX = TITLE_SUFFIX.partition('_')[-1]
+        gps = '-35.2975906, 149.1012676, 554 - DEFAULT'
+    country_code = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CountryCode '{video_file}'") or 'CHE - DEFAULT'
+    country = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Country '{video_file}'") or 'Switzerland - DEFAULT'
+    creator = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Creator '{video_file}'") or 'Leo Huber - DEFAULT'
+    state = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -State '{video_file}'") or 'Zurich - DEFAULT'
+    city = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -City '{video_file}'") or 'Zurich - DEFAULT'
+    sublocation = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Location '{video_file}'") or 'Sublocation - DEFAULT'
+    headline = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Headline '{video_file}'") or 'Headline - DEFAULT'
+    title_suffix = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Title '{video_file}'")
+    if title_suffix:
+        title_suffix = title_suffix.partition('_')[-1]
     else:
-        TITLE_SUFFIX = 'Title Suffix - DEFAULT'
-    DESCRIPTION = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Description '{video_file}'") or 'Description - DEFAULT'
-    COPYRIGHT = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Rights '{video_file}'") or 'Leo Huber - DEFAULT'
+        title_suffix = 'Title Suffix - DEFAULT'
+    description = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Description '{video_file}'") or 'Description - DEFAULT'
+    copyright = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Rights '{video_file}'") or 'Leo Huber - DEFAULT'
 
     # Create a dictionary to hold the metadata
     metadata_fields = [
-        ("IDENTIFIER", IDENTIFIER),
-        ("DATE_CREATED", DATE_CREATED),
-        ("MAKE", MAKE),
-        ("MODEL", MODEL),
-        ("SOURCE_IMAGE_HEIGHT", SOURCE_IMAGE_HEIGHT),
-        ("SOURCE_IMAGE_WIDTH", SOURCE_IMAGE_WIDTH),
-        ("VIDEO_FRAME_RATE", VIDEO_FRAME_RATE),
-        ("COMPRESSOR_NAME", COMPRESSOR_NAME),
-        ("GPS", GPS),
-        ("CREATOR", CREATOR),
-        ("COUNTRY_CODE", COUNTRY_CODE),
-        ("COUNTRY", COUNTRY),
-        ("STATE", STATE),
-        ("CITY", CITY),
-        ("SUBLOCATION", SUBLOCATION),
-        ("HEADLINE", HEADLINE),
-        ("TITLE_SUFFIX", TITLE_SUFFIX),
-        ("DESCRIPTION", DESCRIPTION),
-        ("COPYRIGHT", COPYRIGHT),
+        ("IDENTIFIER", identifier),
+        ("DATE_CREATED", date_created),
+        ("MAKE", make),
+        ("MODEL", model),
+        ("SOURCE_IMAGE_HEIGHT", source_image_height),
+        ("SOURCE_IMAGE_WIDTH", source_image_width),
+        ("VIDEO_FRAME_RATE", video_frame_rate),
+        ("COMPRESSOR_NAME", compressor_name),
+        ("GPS", gps),
+        ("CREATOR", creator),
+        ("COUNTRY_CODE", country_code),
+        ("COUNTRY", country),
+        ("STATE", state),
+        ("CITY", city),
+        ("SUBLOCATION", sublocation),
+        ("HEADLINE", headline),
+        ("TITLE_SUFFIX", title_suffix),
+        ("DESCRIPTION", description),
+        ("COPYRIGHT", copyright),
     ]
 
     metadata = {}
