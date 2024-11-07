@@ -108,11 +108,7 @@ def set_meta_info(video_file):
 		commands = []
 
 		if gps:
-			commands.extend([
-				['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-UserData:GPSCoordinates={gps}', video_file],
-				['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-GPSCoordinates={gps}', video_file],
-			])
-
+			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-GPSCoordinates={gps}', video_file])
 		if source_image_height:
 			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', '-xmp:VideoFrameSizeUnit=pixels', f'-xmp:VideoFrameSizeH={source_image_height}', video_file])
 		if source_image_width:
