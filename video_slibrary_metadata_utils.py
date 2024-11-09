@@ -1,5 +1,3 @@
-# FILE: metadata_utils.py
-
 import subprocess
 
 def get_date_created_and_identifier(video_file, extension, model):
