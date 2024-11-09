@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import json
+from video_slibrary_print_utils import print_green, print_red, print_blue
+
+print_green("Generating video metadata template...")
 
 meta_file = "zzz_meta_data_template.json"
 

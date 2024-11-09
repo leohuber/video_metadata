@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 import glob
 import os
+from video_slibrary_print_utils import print_green, print_red, print_blue
 
-print("Starting the cleanup process of metadate .json files ...")
+print_green("Starting the cleanup process of metadate .json files ...")
 
 # Use glob to find all .json files in the current directory
 txt_files = glob.glob('./*.json')
-print(f"Found {len(txt_files)} .json files to remove.")
+print_green(f"Found {len(txt_files)} .json files to remove.")
 
 # Loop through each file path found
 for file_path in txt_files:
-    print(f"Removing file: {file_path}")
+    print_green(f"Removing file: {file_path}")
     os.remove(file_path)
 
-print("Cleanup process completed.")
+print_green("Cleanup process completed.")

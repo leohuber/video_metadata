@@ -6,9 +6,10 @@ import sys
 import subprocess
 import json
 from video_slibrary_metadata_utils import get_date_created_and_identifier
+from video_slibrary_print_utils import print_green, print_red, print_blue
 
 def error_exit(message):
-    print(message, file=sys.stderr)
+    print_red(message)
     sys.exit(1)
 
 def check_file_exists(filename):
@@ -17,7 +18,7 @@ def check_file_exists(filename):
 
 def generate_metadata(video_file):
 
-    print(f"Processing file: {video_file}")
+    print_green(f"Processing file: {video_file}")
 
     # Check if video file exists
     check_file_exists(video_file)
@@ -91,7 +92,7 @@ def generate_metadata(video_file):
         if value and value != '':
             metadata[key] = value
         else:
-            print(f"Skipping {key} as it has an empty value")
+            print_green(f"Skipping {key} as it has an empty value")
 
     # Write metadata to a JSON file
     with open(meta_file, 'w') as f:

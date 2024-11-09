@@ -5,9 +5,10 @@ import sys
 import shutil
 import os
 import subprocess
+from video_slibrary_print_utils import print_green, print_red, print_blue
 
 def error_exit(message):
-	print(message, file=sys.stderr)
+	print_red(message)
 	sys.exit(1)
 
 def check_file_exists(file_path):
@@ -16,7 +17,7 @@ def check_file_exists(file_path):
 
 def set_meta_info(video_file):
 
-	print(f"Processing file: {video_file}")
+	print_green(f"Processing file: {video_file}")
 
 	check_file_exists(video_file)
 

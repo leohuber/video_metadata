@@ -50,16 +50,16 @@
 # \033[<style>;<text_color>;<background_color>m
 
 def print_green(text):
-    GREEN = '\033[92m'  # ANSI escape code for bright green text
+    GREEN = '\033[1;92m'  # ANSI escape code for bright green text
     RESET = '\033[0m'   # ANSI escape code to reset text formatting to default
     print(f"{GREEN}{text}{RESET}")
 
 def print_blue(text):
-    BLUE = '\033[94m'  # ANSI escape code for bright blue text
+    BLUE = '\033[1;94m'  # ANSI escape code for bright blue text
     RESET = '\033[0m'  # ANSI escape code to reset text formatting to default
     print(f"{BLUE}{text}{RESET}")
 
 def print_red(text):
-    RED = '\033[91m'  # ANSI escape code for bright red text
+    RED = '\033[1;91m'  # ANSI escape code for bright red text
     RESET = '\033[0m'  # ANSI escape code to reset text formatting to default
     print(f"{RED}{text}{RESET}")

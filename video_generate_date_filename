@@ -5,10 +5,11 @@ import sys
 import os
 import subprocess
 from video_slibrary_metadata_utils import get_date_created_and_identifier
+from video_slibrary_print_utils import print_green, print_red, print_blue
 
 def error_exit(message):
     # Prints an error message to the standard error stream and exits the script with a status code of 1.
-    print(message, file=sys.stderr)
+    print_red(message)
     sys.exit(1)
 
 def check_file_exists(file_path):
@@ -18,7 +19,7 @@ def check_file_exists(file_path):
 
 def generate_date_filename(video_file):
 
-    print(f"Processing file: {video_file}")
+    print_green(f"Processing file: {video_file}")
 
     check_file_exists(video_file)
 
@@ -52,7 +53,7 @@ def generate_date_filename(video_file):
     
     if destination_file:
         if os.path.abspath(video_file) == os.path.abspath(destination_file):
-            print("Source and destination files are the same. Aborting to prevent overwriting.")
+            print_green("Source and destination files are the same. Aborting to prevent overwriting.")
         else:
             shutil.copy(video_file, destination_file)
             # Create backup directory if it doesn't exist
@@ -61,7 +62,7 @@ def generate_date_filename(video_file):
             # Copy the original file to the backup directory
             shutil.move(video_file, os.path.join(backup_dir, os.path.basename(video_file)))
     else:
-        print(f"File format or model not supported for file: {video_file}")
+        print_red(f"File format or model not supported for file: {video_file}")
 
 # Check if the exiftool command is available in the system
 if shutil.which('exiftool') is None:

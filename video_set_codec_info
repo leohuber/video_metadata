@@ -5,9 +5,10 @@ import shutil
 import sys
 import subprocess
 import json
+from video_slibrary_print_utils import print_green, print_red, print_blue
 
 def error_exit(message):
-  print(message, file=sys.stderr)
+  print_red(message)
   sys.exit(1)
 
 def check_file_exists(file_path):
@@ -18,9 +19,11 @@ def set_codec_info(video_file):
   # Check if video file exists
   check_file_exists(video_file)
 
+  print_green(f"Processing file: {video_file}")
+
   extension = os.path.splitext(video_file)[1][1:].lower()
 
-  # Meta data file name
+  # Codec data file name
   codec_file = f"{os.path.splitext(video_file)[0]}_codec.json"
 
   with open(codec_file, 'r') as f:
