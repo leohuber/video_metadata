@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import datetime
 import json
 import sys
 import shutil
@@ -23,154 +24,176 @@ def set_meta_info(video_file):
 
 	extension = os.path.splitext(video_file)[1].lower()
 
-	if extension in ['.mov', '.mp4']:
-		meta_file = os.path.splitext(video_file)[0] + '_meta.json'
-		check_file_exists(meta_file)
+	if extension not in ['.mov', '.mp4']:
+		error_exit(f"Unsupported file extension: {extension}")
 
-		# Load meta data from the meta file
-		with open(meta_file) as f:
-			meta_data = json.load(f)
+	meta_file = os.path.splitext(video_file)[0] + '_meta.json'
+	check_file_exists(meta_file)
+
+	# Load meta data from the meta file
+	with open(meta_file) as f:
+		meta_data = json.load(f)
+	
+	# Load default meta data from a template file and overwrite the values with the values from default meta data file
+	template_file = "./zzz_meta_data_template.json"
+	if os.path.isfile(template_file):
+		with open(template_file) as f:
+			template_data = json.load(f)
+			meta_data.update(template_data)
+
+	# mandatory values
+	identifier = meta_data.get('IDENTIFIER')
+	date_created = meta_data.get('DATE_CREATED')
+	make = meta_data.get('MAKE')
+	model = meta_data.get('MODEL')
+	creator = meta_data.get('CREATOR')
+	country_code = meta_data.get('COUNTRY_CODE')
+	country = meta_data.get('COUNTRY')
+	state = meta_data.get('STATE')
+	city = meta_data.get('CITY')
+	sublocation = meta_data.get('SUBLOCATION')
+	headline = meta_data.get('HEADLINE')
+	title_suffix = meta_data.get('TITLE_SUFFIX').lower()
+	description = meta_data.get('DESCRIPTION')
+	copyright = meta_data.get('COPYRIGHT')
+
+	# Check if variables are not None and string values do not contain 'default' (case insensitive)
+	if identifier is None or (isinstance(identifier, str) and 'default' in identifier.lower()):
+		error_exit(f"Invalid value for IDENTIFIER: {identifier}")
+	if date_created is None or (isinstance(date_created, str) and 'default' in date_created.lower()):
+		error_exit(f"Invalid value for DATE_CREATED: {date_created}")
+	if make is None or (isinstance(make, str) and 'default' in make.lower()):
+		error_exit(f"Invalid value for MAKE: {make}")
+	if model is None or (isinstance(model, str) and 'default' in model.lower()):
+		error_exit(f"Invalid value for MODEL: {model}")
+	if creator is None or (isinstance(creator, str) and 'default' in creator.lower()):
+		error_exit(f"Invalid value for CREATOR: {creator}")
+	if country_code is None or (isinstance(country_code, str) and 'default' in country_code.lower()):
+		error_exit(f"Invalid value for COUNTRY_CODE: {country_code}")
+	if country is None or (isinstance(country, str) and 'default' in country.lower()):
+		error_exit(f"Invalid value for COUNTRY: {country}")
+	if state is None or (isinstance(state, str) and 'default' in state.lower()):
+		error_exit(f"Invalid value for STATE: {state}")
+	if city is None or (isinstance(city, str) and 'default' in city.lower()):
+		error_exit(f"Invalid value for CITY: {city}")
+	if sublocation is None or (isinstance(sublocation, str) and 'default' in sublocation.lower()):
+		error_exit(f"Invalid value for SUBLOCATION: {sublocation}")
+	if headline is None or (isinstance(headline, str) and 'default' in headline.lower()):
+		error_exit(f"Invalid value for HEADLINE: {headline}")
+	if title_suffix is None or (isinstance(title_suffix, str) and 'default' in title_suffix.lower()):
+		error_exit(f"Invalid value for TITLE_SUFFIX: {title_suffix}")
+	if description is None or (isinstance(description, str) and 'default' in description.lower()):
+		error_exit(f"Invalid value for DESCRIPTION: {description}")
+	if copyright is None or (isinstance(copyright, str) and 'default' in copyright.lower()):
+		error_exit(f"Invalid value for COPYRIGHT: {copyright}")
+
+	# optional values
+	gps = meta_data.get('GPS')
+	source_image_height = meta_data.get('SOURCE_IMAGE_HEIGHT')
+	source_image_width = meta_data.get('SOURCE_IMAGE_WIDTH')
+	video_frame_rate = meta_data.get('VIDEO_FRAME_RATE')
+	compressor_name = meta_data.get('COMPRESSOR_NAME')
+	codec_data = meta_data.get('CODEC_INFO')
+	if gps is not None:
+		if isinstance(gps, str) and 'default' in gps.lower():
+			error_exit(f"Invalid value for GPS: {gps}")
+	if source_image_height is not None:
+		if isinstance(source_image_height, str) and 'default' in source_image_height.lower():
+			error_exit(f"Invalid value for SOURCE_IMAGE_HEIGHT: {source_image_height}")
+	if source_image_width is not None:
+		if isinstance(source_image_width, str) and 'default' in source_image_width.lower():
+			error_exit(f"Invalid value for SOURCE_IMAGE_WIDTH: {source_image_width}")
+	if video_frame_rate is not None:
+		if isinstance(video_frame_rate, str) and 'default' in video_frame_rate.lower():
+			error_exit(f"Invalid value for VIDEO_FRAME_RATE: {video_frame_rate}")
+	if compressor_name is not None:
+		if isinstance(compressor_name, str) and 'default' in compressor_name.lower():
+			error_exit(f"Invalid value for COMPRESSOR_NAME: {compressor_name}")
+
+	# rename movie file
+	new_video_file = f"{identifier}_{title_suffix}{extension}"
+	if video_file != new_video_file:
+		os.rename(video_file, new_video_file)
+		video_file = new_video_file
+
+	# rename meta data file
+	new_meta_file = f"{identifier}_{title_suffix}_meta.json"
+	if meta_file != new_meta_file:
+		os.rename(meta_file, new_meta_file)
+		meta_file = new_meta_file
+
+	print_green("Creating backup of the original file...")
+	filewithoutext = os.path.splitext(video_file)[0]
+	current_time_suffix = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+	destination_file = f"{filewithoutext}_{current_time_suffix}.{extension}"
+	# Create backup directory if it doesn't exist
+	backup_dir = os.path.join(os.path.dirname(video_file), "backup")
+	os.makedirs(backup_dir, exist_ok=True)
+	# Copy the original file to the backup directory
+	shutil.copy(video_file, os.path.join(backup_dir, destination_file))
+
+	commands = []
+
+	if gps:
+		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-GPSCoordinates={gps}', video_file])
+	if source_image_height:
+		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', '-xmp:VideoFrameSizeUnit=pixels', f'-xmp:VideoFrameSizeH={source_image_height}', video_file])
+	if source_image_width:
+		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', '-xmp:VideoFrameSizeUnit=pixels', f'-xmp:VideoFrameSizeW={source_image_width}', video_file])
+	if video_frame_rate:
+		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoFrameRate={video_frame_rate}', video_file])
+	if compressor_name:
+		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoCompressor={compressor_name}', video_file])
+	
+	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:ShotDate={date_created}', video_file])
+	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:DateTimeOriginal={date_created}', video_file])
+
+	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
+				f'-xmp:CountryCode={country_code}',
+				f'-xmp:Country={country}',
+				f'-xmp:State={state}',
+				f'-xmp:City={city}',
+				f'-xmp:Location={sublocation}',
+				f'-xmp:Title={identifier}_{title_suffix}',
+				f'-xmp:Headline={identifier}_{headline}',
+				f'-xmp:Description={description}',
+				f'-xmp:DateCreated={date_created}',
+				f'-xmp:Creator={creator}',
+				f'-xmp:Marked=True',
+				f'-xmp:Rights={copyright}',
+				video_file])
+
+	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
+				f'-xmp:LocationShownCountryCode={country_code}',
+				f'-xmp:LocationCreatedCountryCode={country_code}',
+				f'-xmp:LocationShownCountryName={country}',
+				f'-xmp:LocationCreatedCountryName={country}',
+				f'-xmp:LocationShownProvinceState={state}',
+				f'-xmp:LocationCreatedProvinceState={state}',
+				f'-xmp:LocationShownCity={city}',
+				f'-xmp:LocationCreatedCity={city}',
+				f'-xmp:LocationShownSublocation={sublocation}',
+				f'-xmp:LocationCreatedSublocation={sublocation}',
+				f'-xmp:DigitalSourceType=http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture',
+				video_file])
+
+	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
+				f'-xmp:Model={model}',
+				f'-xmp:Make={make}',
+				f'-xmp:ImageDescription={description}',
+				video_file])
+
+	comment = ""
+	for key, value in codec_data.items():
+		comment += f"{value}\n"
+	comment = comment.rstrip('\n')
+	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:LogComment={comment}', video_file])
+
+	for cmd in commands:
+		result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+		if result.returncode != 0:
+			error_exit(f"Could not update metadata with command: {' '.join(cmd)}")
 		
-		# Load default meta data from a template file and overwrite the values with the values from default meta data file
-		template_file = "./zzz_meta_data_template.json"
-		if os.path.isfile(template_file):
-			with open(template_file) as f:
-				template_data = json.load(f)
-				meta_data.update(template_data)
-
-		# mandatory values
-		identifier = meta_data.get('IDENTIFIER')
-		date_created = meta_data.get('DATE_CREATED')
-		make = meta_data.get('MAKE')
-		model = meta_data.get('MODEL')
-		creator = meta_data.get('CREATOR')
-		country_code = meta_data.get('COUNTRY_CODE')
-		country = meta_data.get('COUNTRY')
-		state = meta_data.get('STATE')
-		city = meta_data.get('CITY')
-		sublocation = meta_data.get('SUBLOCATION')
-		headline = meta_data.get('HEADLINE')
-		title_suffix = meta_data.get('TITLE_SUFFIX').lower()
-		description = meta_data.get('DESCRIPTION')
-		copyright = meta_data.get('COPYRIGHT')
-
-		# Check if variables are not None and string values do not contain 'default' (case insensitive)
-		if identifier is None or (isinstance(identifier, str) and 'default' in identifier.lower()):
-			error_exit(f"Invalid value for IDENTIFIER: {identifier}")
-		if date_created is None or (isinstance(date_created, str) and 'default' in date_created.lower()):
-			error_exit(f"Invalid value for DATE_CREATED: {date_created}")
-		if make is None or (isinstance(make, str) and 'default' in make.lower()):
-			error_exit(f"Invalid value for MAKE: {make}")
-		if model is None or (isinstance(model, str) and 'default' in model.lower()):
-			error_exit(f"Invalid value for MODEL: {model}")
-		if creator is None or (isinstance(creator, str) and 'default' in creator.lower()):
-			error_exit(f"Invalid value for CREATOR: {creator}")
-		if country_code is None or (isinstance(country_code, str) and 'default' in country_code.lower()):
-			error_exit(f"Invalid value for COUNTRY_CODE: {country_code}")
-		if country is None or (isinstance(country, str) and 'default' in country.lower()):
-			error_exit(f"Invalid value for COUNTRY: {country}")
-		if state is None or (isinstance(state, str) and 'default' in state.lower()):
-			error_exit(f"Invalid value for STATE: {state}")
-		if city is None or (isinstance(city, str) and 'default' in city.lower()):
-			error_exit(f"Invalid value for CITY: {city}")
-		if sublocation is None or (isinstance(sublocation, str) and 'default' in sublocation.lower()):
-			error_exit(f"Invalid value for SUBLOCATION: {sublocation}")
-		if headline is None or (isinstance(headline, str) and 'default' in headline.lower()):
-			error_exit(f"Invalid value for HEADLINE: {headline}")
-		if title_suffix is None or (isinstance(title_suffix, str) and 'default' in title_suffix.lower()):
-			error_exit(f"Invalid value for TITLE_SUFFIX: {title_suffix}")
-		if description is None or (isinstance(description, str) and 'default' in description.lower()):
-			error_exit(f"Invalid value for DESCRIPTION: {description}")
-		if copyright is None or (isinstance(copyright, str) and 'default' in copyright.lower()):
-			error_exit(f"Invalid value for COPYRIGHT: {copyright}")
-
-		# optional values
-		gps = meta_data.get('GPS')
-		source_image_height = meta_data.get('SOURCE_IMAGE_HEIGHT')
-		source_image_width = meta_data.get('SOURCE_IMAGE_WIDTH')
-		video_frame_rate = meta_data.get('VIDEO_FRAME_RATE')
-		compressor_name = meta_data.get('COMPRESSOR_NAME')
-		if gps is not None:
-			if isinstance(gps, str) and 'default' in gps.lower():
-				error_exit(f"Invalid value for GPS: {gps}")
-		if source_image_height is not None:
-			if isinstance(source_image_height, str) and 'default' in source_image_height.lower():
-				error_exit(f"Invalid value for SOURCE_IMAGE_HEIGHT: {source_image_height}")
-		if source_image_width is not None:
-			if isinstance(source_image_width, str) and 'default' in source_image_width.lower():
-				error_exit(f"Invalid value for SOURCE_IMAGE_WIDTH: {source_image_width}")
-		if video_frame_rate is not None:
-			if isinstance(video_frame_rate, str) and 'default' in video_frame_rate.lower():
-				error_exit(f"Invalid value for VIDEO_FRAME_RATE: {video_frame_rate}")
-		if compressor_name is not None:
-			if isinstance(compressor_name, str) and 'default' in compressor_name.lower():
-				error_exit(f"Invalid value for COMPRESSOR_NAME: {compressor_name}")
-
-		commands = []
-
-		if gps:
-			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-GPSCoordinates={gps}', video_file])
-		if source_image_height:
-			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', '-xmp:VideoFrameSizeUnit=pixels', f'-xmp:VideoFrameSizeH={source_image_height}', video_file])
-		if source_image_width:
-			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', '-xmp:VideoFrameSizeUnit=pixels', f'-xmp:VideoFrameSizeW={source_image_width}', video_file])
-		if video_frame_rate:
-			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoFrameRate={video_frame_rate}', video_file])
-		if compressor_name:
-			commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoCompressor={compressor_name}', video_file])
-		
-		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:ShotDate={date_created}', video_file])
-		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:DateTimeOriginal={date_created}', video_file])
-
-		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
-				   f'-xmp:CountryCode={country_code}',
-				   f'-xmp:Country={country}',
-				   f'-xmp:State={state}',
-				   f'-xmp:City={city}',
-				   f'-xmp:Location={sublocation}',
-				   f'-xmp:Title={identifier}_{title_suffix}',
-				   f'-xmp:Headline={identifier}_{headline}',
-				   f'-xmp:Description={description}',
-				   f'-xmp:DateCreated={date_created}',
-				   f'-xmp:Creator={creator}',
-				   f'-xmp:Marked=True',
-				   f'-xmp:Rights={copyright}',
-				   video_file])
-
-		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
-				   f'-xmp:LocationShownCountryCode={country_code}',
-				   f'-xmp:LocationCreatedCountryCode={country_code}',
-				   f'-xmp:LocationShownCountryName={country}',
-				   f'-xmp:LocationCreatedCountryName={country}',
-				   f'-xmp:LocationShownProvinceState={state}',
-				   f'-xmp:LocationCreatedProvinceState={state}',
-				   f'-xmp:LocationShownCity={city}',
-				   f'-xmp:LocationCreatedCity={city}',
-				   f'-xmp:LocationShownSublocation={sublocation}',
-				   f'-xmp:LocationCreatedSublocation={sublocation}',
-				   f'-xmp:DigitalSourceType=http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture',
-				   video_file])
-
-		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
-				   f'-xmp:Model={model}',
-				   f'-xmp:Make={make}',
-				   f'-xmp:ImageDescription={description}',
-				   video_file])
-
-		for cmd in commands:
-			result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-			if result.returncode != 0:
-				error_exit(f"Could not update metadata with command: {' '.join(cmd)}")
-		
-		# rename movie file
-		new_video_file = f"{identifier}_{title_suffix}{extension}"
-		if video_file != new_video_file:
-			os.rename(video_file, new_video_file)
-
-		# rename meta data file
-		new_meta_file = f"{identifier}_{title_suffix}_meta.json"
-		if meta_file != new_meta_file:
-			os.rename(meta_file, new_meta_file)
 
 # Check if the exiftool command is available in the system
 if shutil.which('exiftool') is None:

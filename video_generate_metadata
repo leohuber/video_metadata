@@ -3,10 +3,14 @@
 import os
 import shutil
 import sys
-import subprocess
-import json
-from video_slibrary_metadata_utils import get_date_created_and_identifier
+import json 
 from video_slibrary_print_utils import print_green, print_red, print_blue
+from video_slibrary_metadata_utils import (
+        generate_codec_info, get_date_created_and_identifier, get_make, get_model, get_source_image_height, get_source_image_width,
+        get_video_frame_rate, get_compressor_name, get_gps, get_country_code,
+        get_country, get_creator, get_state, get_city, get_sublocation,
+        get_headline, get_title_suffix, get_description, get_copyright
+    )
 
 def error_exit(message):
     print_red(message)
@@ -18,6 +22,10 @@ def check_file_exists(filename):
 
 def generate_metadata(video_file):
 
+    date_created = None
+    identifier = None
+    destination_file = None
+
     print_green(f"Processing file: {video_file}")
 
     # Check if video file exists
@@ -26,43 +34,42 @@ def generate_metadata(video_file):
     # Extract file extension
     extension = os.path.splitext(video_file)[1][1:].lower()
 
-    # Extract the model of the camera
-    model = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Model '{video_file}'")
+    date_created, identifier = get_date_created_and_identifier(video_file, extension)
+    if date_created is None or identifier is None:
+        error_exit("date_created or identifier is None. Exiting.")
+
+    if extension == "mov":
+        destination_file = f"{identifier}.mov"
+    elif extension == "mp4":
+        destination_file = f"{identifier}.mp4"
+    elif extension == "mts":
+        destination_file = f"{identifier}.mts"
+    
+    if os.path.abspath(video_file) != os.path.abspath(destination_file):
+        os.rename(video_file, destination_file)
+        video_file = destination_file
 
     # Create meta data file name
     meta_file = f"{os.path.splitext(video_file)[0]}_meta.json"
 
-    date_created, identifier = get_date_created_and_identifier(video_file, extension, model)
-    
-    if date_created is None or identifier is None:
-        error_exit("date_created or identifier is None. Exiting.")
 
-    # Extract other metadata
-    make = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Make '{video_file}'") or 'Apple - DEFAULT'
-    model = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Model '{video_file}'") or 'iPhone 11 Pro - DEFAULT'
-    source_image_height = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -SourceImageHeight '{video_file}'")
-    source_image_width = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -SourceImageWidth '{video_file}'")
-    video_frame_rate = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -VideoFrameRate '{video_file}'")
-    compressor_name = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CompressorName '{video_file}'")
-    gps = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -GPSCoordinates '{video_file}'")
-    if gps:
-        gps = gps.replace(' ', ', ')
-    else:
-        gps = '-35.2975906, 149.1012676, 554 - DEFAULT'
-    country_code = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -CountryCode '{video_file}'") or 'CHE - DEFAULT'
-    country = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Country '{video_file}'") or 'Switzerland - DEFAULT'
-    creator = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Creator '{video_file}'") or 'Leo Huber - DEFAULT'
-    state = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -State '{video_file}'") or 'Zurich - DEFAULT'
-    city = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -City '{video_file}'") or 'Zurich - DEFAULT'
-    sublocation = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Location '{video_file}'") or 'Sublocation - DEFAULT'
-    headline = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Headline '{video_file}'") or 'Headline - DEFAULT'
-    title_suffix = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Title '{video_file}'")
-    if title_suffix:
-        title_suffix = title_suffix.partition('_')[-1]
-    else:
-        title_suffix = 'Title Suffix - DEFAULT'
-    description = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Description '{video_file}'") or 'Description - DEFAULT'
-    copyright = subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Rights '{video_file}'") or 'Leo Huber - DEFAULT'
+    make = get_make(video_file)
+    model = get_model(video_file)
+    source_image_height = get_source_image_height(video_file)
+    source_image_width = get_source_image_width(video_file)
+    video_frame_rate = get_video_frame_rate(video_file)
+    compressor_name = get_compressor_name(video_file)
+    gps = get_gps(video_file)
+    country_code = get_country_code(video_file)
+    country = get_country(video_file)
+    creator = get_creator(video_file)
+    state = get_state(video_file)
+    city = get_city(video_file)
+    sublocation = get_sublocation(video_file)
+    headline = get_headline(video_file)
+    title_suffix = get_title_suffix(video_file)
+    description = get_description(video_file)
+    copyright = get_copyright(video_file)
 
     # Create a dictionary to hold the metadata
     metadata_fields = [
@@ -94,9 +101,35 @@ def generate_metadata(video_file):
         else:
             print_green(f"Skipping {key} as it has an empty value")
 
+    codec_info = generate_codec_info(video_file)
+    metadata['CODEC_INFO'] = codec_info
+
     # Write metadata to a JSON file
     with open(meta_file, 'w') as f:
         json.dump(metadata, f, indent=4)
+
+    meta_file_zzz = "zzz_meta_data_template.json"
+
+    if not os.path.exists(meta_file_zzz):
+        print_green("Generating video metadata template...")
+        meta_data = {
+            "MAKE": "Canon - DEFAULT",
+            "MODEL": "Canon EOS R6 - DEFAULT",
+            "GPS": "-35.2975906, 149.1012676, 554 - DEFAULT",
+            "CREATOR": "Leo Huber - DEFAULT",
+            "COUNTRY_CODE": "CHE - DEFAULT",
+            "COUNTRY": "Switzerland - DEFAULT",
+            "STATE": "Zurich - DEFAULT",
+            "CITY": "Zurich - DEFAULT",
+            "SUBLOCATION": "Sublocation - DEFAULT",
+            "HEADLINE": "Headline - DEFAULT",
+            "TITLE_SUFFIX": "Title Suffix - DEFAULT",
+            "DESCRIPTION": "Description - DEFAULT",
+            "COPYRIGHT": "Leo Huber - DEFAULT"
+        }
+
+        with open(meta_file_zzz, 'w') as f:
+            json.dump(meta_data, f, indent=4)
 
 # Check if the exiftool command is available in the system
 if shutil.which('exiftool') is None:
