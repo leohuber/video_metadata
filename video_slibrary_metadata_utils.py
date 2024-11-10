@@ -120,7 +120,6 @@ def generate_codec_info(video_file):
   # HDR Format
   hdr_format = get_mediainfo(video_file, 'Video', 'HDR_Format/String')
   if hdr_format:
-    print(f"HDR Format: {hdr_format}")
     codec_info['HDR_FORMAT'] = f"HDR Format: {hdr_format}"
 
   # Pixel Format
