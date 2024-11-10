@@ -35,6 +35,9 @@ def get_date_created_and_identifier(video_file, extension):
 
     return date_created, identifier
 
+def get_metadata_all(video_file):
+   return subprocess.getoutput(f"exiftool -a -G0:1 -api largefilesupport=1 '{video_file}'")
+
 def get_make(video_file):
     return subprocess.getoutput(f"exiftool -q -q -b -api largefilesupport=1 -Make '{video_file}'") or 'Apple - DEFAULT'
 

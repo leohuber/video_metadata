@@ -6,6 +6,7 @@ import sys
 import shutil
 import os
 import subprocess
+from video_slibrary_metadata_utils import get_metadata_all
 from video_slibrary_print_utils import print_green, print_red, print_blue
 
 def error_exit(message):
@@ -29,6 +30,9 @@ def set_meta_info(video_file):
 
 	meta_file = os.path.splitext(video_file)[0] + '_meta.json'
 	check_file_exists(meta_file)
+
+	meta_file_all = os.path.splitext(video_file)[0] + '_meta_all.txt'
+	check_file_exists(meta_file_all)
 
 	# Load meta data from the meta file
 	with open(meta_file) as f:
@@ -121,16 +125,29 @@ def set_meta_info(video_file):
 	if meta_file != new_meta_file:
 		os.rename(meta_file, new_meta_file)
 		meta_file = new_meta_file
+	
+	# rename meta data all file
+	new_meta_file_all = f"{identifier}_{title_suffix}_meta_all.txt"
+	if meta_file_all != new_meta_file_all:
+		os.rename(meta_file_all, new_meta_file_all)
+		meta_file_all = new_meta_file_all
 
 	print_green("Creating backup of the original file...")
-	filewithoutext = os.path.splitext(video_file)[0]
+
+	# add time stamp to file names
 	current_time_suffix = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-	destination_file = f"{filewithoutext}_{current_time_suffix}.{extension}"
+	destination_file = f"{identifier}_{current_time_suffix}.{extension}"
+	destination_meta_file = f"{identifier}_{current_time_suffix}_meta.json"
+	destination_meta_file_all = f"{identifier}_{current_time_suffix}_meta_all.txt"
+	
 	# Create backup directory if it doesn't exist
 	backup_dir = os.path.join(os.path.dirname(video_file), "backup")
 	os.makedirs(backup_dir, exist_ok=True)
+
 	# Copy the original file to the backup directory
 	shutil.copy(video_file, os.path.join(backup_dir, destination_file))
+	shutil.copy(meta_file, os.path.join(backup_dir, destination_meta_file))
+	shutil.copy(meta_file_all, os.path.join(backup_dir, destination_meta_file_all))
 
 	commands = []
 
@@ -193,6 +210,12 @@ def set_meta_info(video_file):
 		result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 		if result.returncode != 0:
 			error_exit(f"Could not update metadata with command: {' '.join(cmd)}")
+			
+	# Update all metadata fields
+	meta_data_all = get_metadata_all(video_file)
+	# Write all metadata to a text file
+	with open(meta_file_all, 'w') as f:
+		f.write(meta_data_all)
 		
 
 # Check if the exiftool command is available in the system

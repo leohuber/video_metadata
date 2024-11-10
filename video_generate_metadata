@@ -6,7 +6,8 @@ import sys
 import json 
 from video_slibrary_print_utils import print_green, print_red, print_blue
 from video_slibrary_metadata_utils import (
-        generate_codec_info, get_date_created_and_identifier, get_make, get_model, get_source_image_height, get_source_image_width,
+        get_metadata_all, generate_codec_info, get_date_created_and_identifier,
+        get_make, get_model, get_source_image_height, get_source_image_width,
         get_video_frame_rate, get_compressor_name, get_gps, get_country_code,
         get_country, get_creator, get_state, get_city, get_sublocation,
         get_headline, get_title_suffix, get_description, get_copyright
@@ -49,9 +50,9 @@ def generate_metadata(video_file):
         os.rename(video_file, destination_file)
         video_file = destination_file
 
-    # Create meta data file name
+    # Meta data file names
     meta_file = f"{os.path.splitext(video_file)[0]}_meta.json"
-
+    meta_all_file = f"{os.path.splitext(video_file)[0]}_meta_all.txt"
 
     make = get_make(video_file)
     model = get_model(video_file)
@@ -94,6 +95,9 @@ def generate_metadata(video_file):
         ("COPYRIGHT", copyright),
     ]
 
+    # Get all metadata fields
+    meta_data_all = get_metadata_all(video_file)
+
     metadata = {}
     for key, value in metadata_fields:
         if value and value != '':
@@ -107,6 +111,10 @@ def generate_metadata(video_file):
     # Write metadata to a JSON file
     with open(meta_file, 'w') as f:
         json.dump(metadata, f, indent=4)
+
+    # Write all metadata to a text file
+    with open(meta_all_file, 'w') as f:
+        f.write(meta_data_all)
 
     meta_file_zzz = "zzz_meta_data_template.json"
 
