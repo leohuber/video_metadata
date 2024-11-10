@@ -132,7 +132,7 @@ def set_meta_info(video_file):
 		os.rename(meta_file_all, new_meta_file_all)
 		meta_file_all = new_meta_file_all
 
-	print_green("Creating backup of the original file...")
+	print_green("Creating backup of the original files ...")
 
 	# add time stamp to file names
 	current_time_suffix = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -178,6 +178,7 @@ def set_meta_info(video_file):
 				f'-xmp:Creator={creator}',
 				f'-xmp:Marked=True',
 				f'-xmp:Rights={copyright}',
+				f'-xmp:ImageDescription={description}',
 				video_file])
 
 	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
@@ -194,10 +195,10 @@ def set_meta_info(video_file):
 				f'-xmp:DigitalSourceType=http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture',
 				video_file])
 
+	# Update the make and model of the camera
 	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
-				f'-xmp:Model={model}',
-				f'-xmp:Make={make}',
-				f'-xmp:ImageDescription={description}',
+				f'-Model={model}',
+				f'-Make={make}',
 				video_file])
 
 	comment = ""

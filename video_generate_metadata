@@ -39,12 +39,15 @@ def generate_metadata(video_file):
     if date_created is None or identifier is None:
         error_exit("date_created or identifier is None. Exiting.")
 
+    # Check if the file extension is either mov or mp4
+    if extension not in ["mov", "mp4"]:
+        error_exit(f"Unsupported file extension: {extension}. Only 'mov' and 'mp4' files are allowed.")
+    
+    # Rename the file to the identifier
     if extension == "mov":
         destination_file = f"{identifier}.mov"
     elif extension == "mp4":
         destination_file = f"{identifier}.mp4"
-    elif extension == "mts":
-        destination_file = f"{identifier}.mts"
     
     if os.path.abspath(video_file) != os.path.abspath(destination_file):
         os.rename(video_file, destination_file)
