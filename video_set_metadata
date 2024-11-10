@@ -84,7 +84,7 @@ def set_meta_info(video_file):
 		error_exit(f"Invalid value for SUBLOCATION: {sublocation}")
 	if headline is None or (isinstance(headline, str) and 'default' in headline.lower()):
 		error_exit(f"Invalid value for HEADLINE: {headline}")
-	if title_suffix is None or (isinstance(title_suffix, str) and 'default' in title_suffix.lower()):
+	if title_suffix is None or (isinstance(title_suffix, str) and ('default' in title_suffix.lower() or ' ' in title_suffix)):
 		error_exit(f"Invalid value for TITLE_SUFFIX: {title_suffix}")
 	if description is None or (isinstance(description, str) and 'default' in description.lower()):
 		error_exit(f"Invalid value for DESCRIPTION: {description}")

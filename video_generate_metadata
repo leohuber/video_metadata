@@ -102,7 +102,7 @@ def generate_metadata(video_file: str) -> None:
             "CITY": "Zurich - DEFAULT",
             "SUBLOCATION": "Sublocation - DEFAULT",
             "HEADLINE": "Headline - DEFAULT",
-            "TITLE_SUFFIX": "Title Suffix - DEFAULT",
+            "TITLE_SUFFIX": "title_suffix - DEFAULT",
             "DESCRIPTION": "Description - DEFAULT",
             "COPYRIGHT": "Leo Huber - DEFAULT"
         }
