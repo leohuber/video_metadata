@@ -114,35 +114,28 @@ def set_meta_info(video_file):
 		if isinstance(compressor_name, str) and 'default' in compressor_name.lower():
 			error_exit(f"Invalid value for COMPRESSOR_NAME: {compressor_name}")
 
-	# rename movie file
-	new_video_file = f"{identifier}_{title_suffix}{extension}"
-	if video_file != new_video_file:
-		os.rename(video_file, new_video_file)
-		video_file = new_video_file
+	# Rename files if necessary
+	def rename_file(old_name, new_name):
+		if old_name != new_name:
+			os.rename(old_name, new_name)
+			return new_name
+		return old_name
 
-	# rename meta data file
-	new_meta_file = f"{identifier}_{title_suffix}_meta.json"
-	if meta_file != new_meta_file:
-		os.rename(meta_file, new_meta_file)
-		meta_file = new_meta_file
-	
-	# rename meta data all file
-	new_meta_file_all = f"{identifier}_{title_suffix}_meta_all.txt"
-	if meta_file_all != new_meta_file_all:
-		os.rename(meta_file_all, new_meta_file_all)
-		meta_file_all = new_meta_file_all
+	video_file = rename_file(video_file, f"{identifier}_{title_suffix}{extension}")
+	meta_file = rename_file(meta_file, f"{identifier}_{title_suffix}_meta.json")
+	meta_file_all = rename_file(meta_file_all, f"{identifier}_{title_suffix}_meta_all.txt")
 
 	print_green("Creating backup of the original files ...")
 
-	# add time stamp to file names
-	current_time_suffix = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-	destination_file = f"{identifier}_{current_time_suffix}.{extension}"
-	destination_meta_file = f"{identifier}_{current_time_suffix}_meta.json"
-	destination_meta_file_all = f"{identifier}_{current_time_suffix}_meta_all.txt"
-	
 	# Create backup directory if it doesn't exist
 	backup_dir = os.path.join(os.path.dirname(video_file), "backup")
 	os.makedirs(backup_dir, exist_ok=True)
+
+	# add time stamp to file names
+	current_time_suffix = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+	destination_file = f"{identifier}_{title_suffix}-{current_time_suffix}.{extension}"
+	destination_meta_file = f"{identifier}_{title_suffix}-{current_time_suffix}_meta.json"
+	destination_meta_file_all = f"{identifier}_{title_suffix}-{current_time_suffix}_meta_all.txt"
 
 	# Copy the original file to the backup directory
 	shutil.copy(video_file, os.path.join(backup_dir, destination_file))
@@ -162,10 +155,9 @@ def set_meta_info(video_file):
 	if compressor_name:
 		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoCompressor={compressor_name}', video_file])
 	
-	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:ShotDate={date_created}', video_file])
-	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:DateTimeOriginal={date_created}', video_file])
-
 	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
+				f'-xmp:ShotDate={date_created}',
+				f'-xmp:DateTimeOriginal={date_created}',
 				f'-xmp:CountryCode={country_code}',
 				f'-xmp:Country={country}',
 				f'-xmp:State={state}',
@@ -179,9 +171,6 @@ def set_meta_info(video_file):
 				f'-xmp:Marked=True',
 				f'-xmp:Rights={copyright}',
 				f'-xmp:ImageDescription={description}',
-				video_file])
-
-	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
 				f'-xmp:LocationShownCountryCode={country_code}',
 				f'-xmp:LocationCreatedCountryCode={country_code}',
 				f'-xmp:LocationShownCountryName={country}',
@@ -193,10 +182,6 @@ def set_meta_info(video_file):
 				f'-xmp:LocationShownSublocation={sublocation}',
 				f'-xmp:LocationCreatedSublocation={sublocation}',
 				f'-xmp:DigitalSourceType=http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture',
-				video_file])
-
-	# Update the make and model of the camera
-	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
 				f'-Model={model}',
 				f'-Make={make}',
 				video_file])
