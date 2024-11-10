@@ -136,7 +136,7 @@ def get_title_suffix(video_file: str) -> str:
     stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
   )
   title_suffix = result.stdout.strip()
-  return title_suffix.partition('_')[-1] if title_suffix else 'Title Suffix - DEFAULT'
+  return title_suffix.partition('_')[-1] if title_suffix else 'title_suffix - DEFAULT'
 
 def get_description(video_file: str) -> str:
   result = subprocess.run(
