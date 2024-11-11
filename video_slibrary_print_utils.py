@@ -49,17 +49,17 @@
 # ANSI escape codes are used to apply text color, background color, and text styles in the terminal. These codes are embedded in the text string and interpreted by the terminal to format the text accordingly.
 # \033[<style>;<text_color>;<background_color>m
 
-def print_green(text):
+def print_green(text) -> None:
     GREEN = '\033[1;92m'  # ANSI escape code for bright green text
     RESET = '\033[0m'   # ANSI escape code to reset text formatting to default
     print(f"{GREEN}{text}{RESET}")
 
-def print_blue(text):
+def print_blue(text) -> None:
     BLUE = '\033[1;94m'  # ANSI escape code for bright blue text
     RESET = '\033[0m'  # ANSI escape code to reset text formatting to default
     print(f"{BLUE}{text}{RESET}")
 
-def print_red(text):
+def print_red(text) -> None:
     RED = '\033[1;91m'  # ANSI escape code for bright red text
     RESET = '\033[0m'  # ANSI escape code to reset text formatting to default
     print(f"{RED}{text}{RESET}")
