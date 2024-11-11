@@ -27,6 +27,10 @@ This script sets metadata for video files based on provided metadata files. It p
 - Updates metadata of the video files.
 - Creates backups of the original files.
 
+## Comparing MetaData before and after an update
+
+The script `video_set_metadata` creates a copy of the complete dump of the available metadata before and after the update. The backup of the metadata dump after the update can be found in the backup directory. To compare the metadata before and after the update perform the following command `vim -d backup/file2.txt file1.txt`
+
 ## Exiftool Group Names
 ExifTool uses group names to categorize metadata tags based on their location and context. Groups are organized into families, and each group has a name that helps identify where a tag comes from.
 
