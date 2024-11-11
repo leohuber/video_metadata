@@ -9,15 +9,15 @@ import subprocess
 from video_slibrary_metadata_utils import get_metadata_all
 from video_slibrary_print_utils import print_green, print_red, print_blue
 
-def error_exit(message):
+def error_exit(message) -> None:
 	print_red(message)
 	sys.exit(1)
 
-def check_file_exists(file_path):
+def check_file_exists(file_path) -> None:
 	if not os.path.isfile(file_path):
 		error_exit(f"Could not find file: {file_path}")
 
-def set_meta_info(video_file):
+def set_meta_info(video_file) -> None:
 
 	print_green(f"Processing file: {video_file}")
 
