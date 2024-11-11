@@ -68,6 +68,17 @@ XMP-dc Group:
 - `-xmp:DateTimeOriginal`: Sets and extracts the XMP original date and time tag.
 - `-xmp:ShotDate`: Sets and extracts the XMP shot date tag.
 
+# TODO: rewrite!!
+
+https://superuser.com/questions/1285914/what-is-the-difference-between-the-exif-tags-createdate-creationdate-etc#1285932
+
+One minor nitpick, these tags are not EXIF tags, they are Quicktime tags (all EXIF is Metadata, but not all Metadata is EXIF). You can add -G1 to your command to see the group they belong too. Additionally, if you add -a to your command, you will probably see that TrackCreateDate and MediaCreateDate are duplicated, one for each track in the file (video, audio, etc).
+CreateDate is probably the most accurate, but if the video is coming directly from a digital camera of some sort, it is probably the same value as TrackCreateDate and MediaCreateDate.
+Video metadata isn't my expertise, but I would guess that Track/MediaCreateDate leaves open the possibility of keeping track of an earlier created video/sound track and muxing them together for a final product. Something that might pop up if you are editing various video clips together.
+One thing to take note of is that these three tags are supposed to be recorded in UTC time. See fifth paragraph on the Exiftool Quicktime tag page. The trouble is that some cameras, mostly any camera that is not aware of the current time zone, do not adhere to the specs, so the time that appears in the above tags may not at first seem to be the correct time.
+CreationDate is different. It includes a timezone, is supposed to be set to the local time where the video was taken, and is part of the QuickTime Keys Tags. It requires exiftool ver 11.39+ to edit. Also of note is that some versions of the Apple Photos app will display wildly inaccurate time if the Quicktime:CreationDate or Quicktime:DateTimeOriginal tags do not include a time zone (see third image in this exiftool forum post). Exiftool ver 12.13+ will automatically add the local time zone if one is not included when writing.
+
+
 ### Camera Information
 - `-Model`: Sets and extracts the camera model used to create the file.
 - `-Make`: Sets and extracts the camera make used to create the file.
