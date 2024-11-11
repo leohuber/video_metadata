@@ -70,6 +70,8 @@ XMP-dc Group:
 
 # TODO: rewrite!!
 
+https://exiftool.org/TagNames/QuickTime.html (check 5th paragraph)
+
 https://superuser.com/questions/1285914/what-is-the-difference-between-the-exif-tags-createdate-creationdate-etc#1285932
 
 One minor nitpick, these tags are not EXIF tags, they are Quicktime tags (all EXIF is Metadata, but not all Metadata is EXIF). You can add -G1 to your command to see the group they belong too. Additionally, if you add -a to your command, you will probably see that TrackCreateDate and MediaCreateDate are duplicated, one for each track in the file (video, audio, etc).
