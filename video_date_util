@@ -19,8 +19,7 @@ if len(sys.argv) < 2:
 
 def print_dates(movie_file: str) -> None:
     print_green(f"Getting dates for video file: {movie_file}")
-    os.system(f'exiftool -time:all -G0:1 "{movie_file}"')
-    os.system(f'exiftool -time:all -G0:1 "{movie_file}" | grep "Create Date"')
+    os.system(f'exiftool -G0:1 -s -time:all "{movie_file}"')
 
 for movie_file in sys.argv[1:]:
     print_dates(movie_file)

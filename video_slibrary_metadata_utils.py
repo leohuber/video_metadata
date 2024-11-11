@@ -26,7 +26,7 @@ def get_date_created_and_identifier(video_file: str, extension: str) -> Tuple[Op
 
 def get_metadata_all(video_file: str) -> str:
   result = subprocess.run(
-    ["exiftool", "-a", "-G0:1", "-api", "largefilesupport=1", shlex.quote(video_file)],
+    ["exiftool", "-a", "-G0:1", "-s", "-api", "largefilesupport=1", shlex.quote(video_file)],
     stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
   )
   return result.stdout.strip()
