@@ -62,56 +62,56 @@ XMP-dc Group:
 - `-G0:1`: Print family 0 and family 1 group name for each tag.
 
 ### Date and Time
-- `-CreateDate`: Extracts the creation date of the file.
-- `-DateTimeOriginal`: Extracts the original date and time when the file was created.
-- `-SubSecCreateDate`: Extracts the creation date with sub-second precision.
-- `-xmp:DateTimeOriginal`: Sets the XMP original date and time tag.
-- `-xmp:ShotDate`: Sets the XMP shot date tag.
+- `-CreateDate`: Sets and extracts the creation date of the file.
+- `-DateTimeOriginal`: Sets and extracts the original date and time when the file was created.
+- `-SubSecCreateDate`: Sets and extracts the creation date with sub-second precision.
+- `-xmp:DateTimeOriginal`: Sets and extracts the XMP original date and time tag.
+- `-xmp:ShotDate`: Sets and extracts the XMP shot date tag.
 
 ### Camera Information
-- `-Model`: Set or extract the camera model used to create the file.
-- `-Make`: Set or extract the camera make used to create the file.
+- `-Model`: Sets and extracts the camera model used to create the file.
+- `-Make`: Sets and extracts the camera make used to create the file.
 
 ### Location Information
-- `-GPSCoordinates`: Set or extract the GPS coordinates.
-- `-UserData:GPSCoordinates`: Sets the GPS coordinates in the user data.
-- `-xmp:LocationShownCountryCode`: Sets the XMP location shown country code tag.
-- `-xmp:LocationCreatedCountryCode`: Sets the XMP location created country code tag.
-- `-xmp:LocationShownCountryName`: Sets the XMP location shown country name tag.
-- `-xmp:LocationCreatedCountryName`: Sets the XMP location created country name tag.
-- `-xmp:LocationShownProvinceState`: Sets the XMP location shown province/state tag.
-- `-xmp:LocationCreatedProvinceState`: Sets the XMP location created province/state tag.
-- `-xmp:LocationShownCity`: Sets the XMP location shown city tag.
-- `-xmp:LocationCreatedCity`: Sets the XMP location created city tag.
-- `-xmp:LocationShownSublocation`: Sets the XMP location shown sublocation tag.
-- `-xmp:LocationCreatedSublocation`: Sets the XMP location created sublocation tag.
+- `-GPSCoordinates`: Sets and extracts the GPS coordinates.
+- `-UserData:GPSCoordinates`: Sets and extracts the GPS coordinates in the user data.
+- `-xmp:LocationShownCountryCode`: Sets and extracts the XMP location shown country code tag.
+- `-xmp:LocationCreatedCountryCode`: Sets and extracts the XMP location created country code tag.
+- `-xmp:LocationShownCountryName`: Sets and extracts the XMP location shown country name tag.
+- `-xmp:LocationCreatedCountryName`: Sets and extracts the XMP location created country name tag.
+- `-xmp:LocationShownProvinceState`: Sets and extracts the XMP location shown province/state tag.
+- `-xmp:LocationCreatedProvinceState`: Sets and extracts the XMP location created province/state tag.
+- `-xmp:LocationShownCity`: Sets and extracts the XMP location shown city tag.
+- `-xmp:LocationCreatedCity`: Sets and extracts the XMP location created city tag.
+- `-xmp:LocationShownSublocation`: Sets and extracts the XMP location shown sublocation tag.
+- `-xmp:LocationCreatedSublocation`: Sets and extracts the XMP location created sublocation tag.
 
 ### Descriptive Information
-- `-xmp:ImageDescription`: Sets the XMP image description tag.
-- `-xmp:Title`: Sets the XMP title tag.
-- `-xmp:Headline`: Sets the XMP headline tag.
-- `-xmp:Description`: Sets the XMP description tag.
-- `-xmp:Creator`: Sets the XMP creator tag.
-- `-xmp:Marked`: Sets the XMP marked tag.
-- `-xmp:Rights`: Sets the XMP rights tag.
-- `-Rights`: Extracts the copyright information.
-- `-Headline`: Extracts the headline information.
-- `-Title`: Extracts the title information.
-- `-Description`: Extracts the description information.
-- `-CountryCode`: Extracts the country code information.
-- `-Country`: Extracts the country information.
-- `-State`: Extracts the state information.
-- `-City`: Extracts the city information.
-- `-Location`: Extracts the location information.
-- `-Creator`: Extracts the creator information.
+- `-xmp:ImageDescription`: Sets and extracts the XMP image description tag.
+- `-xmp:Title`: Sets and extracts the XMP title tag.
+- `-xmp:Headline`: Sets and extracts the XMP headline tag.
+- `-xmp:Description`: Sets and extracts the XMP description tag.
+- `-xmp:Creator`: Sets and extracts the XMP creator tag.
+- `-xmp:Marked`: Sets and extracts the XMP marked tag.
+- `-xmp:Rights`: Sets and extracts the XMP rights tag.
+- `-Rights`: Sets and extracts the copyright information.
+- `-Headline`: Sets and extracts the headline information.
+- `-Title`: Sets and extracts the title information.
+- `-Description`: Sets and extracts the description information.
+- `-CountryCode`: Sets and extracts the country code information.
+- `-Country`: Sets and extracts the country information.
+- `-State`: Sets and extracts the state information.
+- `-City`: Sets and extracts the city information.
+- `-Location`: Sets and extracts the location information.
+- `-Creator`: Sets and extracts the creator information.
 
 ### Video Information
-- `-xmp:VideoFrameSizeH`: Sets the XMP video frame size height tag.
-- `-xmp:VideoFrameSizeW`: Sets the XMP video frame size width tag.
-- `-xmp:VideoFrameRate`: Sets the XMP video frame rate tag.
-- `-xmp:VideoCompressor`: Sets the XMP video compressor tag.
-- `-xmp:VideoFrameSizeUnit`: Sets the XMP video frame size unit tag.
+- `-xmp:VideoFrameSizeH`: Sets and extracts the XMP video frame size height tag.
+- `-xmp:VideoFrameSizeW`: Sets and extracts the XMP video frame size width tag.
+- `-xmp:VideoFrameRate`: Sets and extracts the XMP video frame rate tag.
+- `-xmp:VideoCompressor`: Sets and extracts the XMP video compressor tag.
+- `-xmp:VideoFrameSizeUnit`: Sets and extracts the XMP video frame size unit tag.
 
 ### Miscellaneous
-- `-xmp:DigitalSourceType`: Sets the XMP digital source type tag.
+- `-xmp:DigitalSourceType`: Sets and extracts the XMP digital source type tag.
 
