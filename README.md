@@ -70,12 +70,9 @@ XMP-dc Group:
 
 ## Dates
 
-One minor nitpick, these tags are not EXIF tags, they are Quicktime tags (all EXIF is Metadata, but not all Metadata is EXIF). You can add -G1 to your command to see the group they belong too. Additionally, if you add -a to your command, you will probably see that TrackCreateDate and MediaCreateDate are duplicated, one for each track in the file (video, audio, etc).
-CreateDate is probably the most accurate, but if the video is coming directly from a digital camera of some sort, it is probably the same value as TrackCreateDate and MediaCreateDate.
-Video metadata isn't my expertise, but I would guess that Track/MediaCreateDate leaves open the possibility of keeping track of an earlier created video/sound track and muxing them together for a final product. Something that might pop up if you are editing various video clips together.
+`CreateDate` is likely the most accurate timestamp, especially for videos directly from a digital camera, as it often matches `TrackCreateDate` and `MediaCreateDate`. The `TrackCreateDate` and `MediaCreateDate` tags might be used to track the creation of individual video or sound tracks, which can be useful when editing and combining multiple clips.
 
-One thing to take note of is that these three tags are supposed to be recorded in UTC time. See fifth paragraph on the Exiftool Quicktime tag page. The trouble is that some cameras, mostly any camera that is not aware of the current time zone, do not adhere to the specs, so the time that appears in the above tags may not at first seem to be the correct time.
-CreationDate is different. It includes a timezone, is supposed to be set to the local time where the video was taken, and is part of the QuickTime Keys Tags. It requires exiftool ver 11.39+ to edit. Also of note is that some versions of the Apple Photos app will display wildly inaccurate time if the Quicktime:CreationDate or Quicktime:DateTimeOriginal tags do not include a time zone (see third image in this exiftool forum post). Exiftool ver 12.13+ will automatically add the local time zone if one is not included when writing.
+Note that the `CreateDate`, `TrackCreateDate`, and `MediaCreateDate` tags are recorded in UTC time. However, some cameras may not adhere to this specification, leading to incorrect timestamps. The `CreationDate` tag, which includes a timezone and is set to the local time where the video was taken, is part of the QuickTime Keys Tags and requires ExifTool version 11.39+ to edit. Additionally, some versions of the Apple Photos app may display incorrect times if the `Quicktime:CreationDate` or `Quicktime:DateTimeOriginal` tags lack a timezone. ExifTool version 12.13+ will automatically add the local timezone if it is missing when writing.
 
 More information:
 * https://exiftool.org/TagNames/QuickTime.html (check 5th paragraph)
