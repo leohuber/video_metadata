@@ -33,4 +33,4 @@ done
 zip ../release_v${VERSION}.zip video_* install.sh
 cd ../
 
-gh release create v${VERSION} --title "Release v${VERSION}" --generate-notes --draft release/release_v${VERSION}.zip
+gh release create v${VERSION} --title "Release v${VERSION}" --generate-notes release/release_v${VERSION}.zip
