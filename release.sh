@@ -2,15 +2,6 @@
 
 VERSION="1.0.0"
 
-# Remove old versions of release if they exist
-rm -Rf release
-
-# Create a release directory
-mkdir -p release
-
-# Create a new release zip file
-zip release/release_v${VERSION}.zip video_* install.sh
-
 # Check if GitHub CLI is installed
 if ! command -v gh &> /dev/null
 then
@@ -25,4 +16,20 @@ then
     exit 1
 fi
 
-gh release create v${VERSION} --title "Release v${VERSION}" --generate-notes --draft release/release_v${VERSION}.zip
+# Remove old versions of release if they exist
+rm -Rf release
+
+# Create a release directory
+mkdir -p release/tmp
+
+# Loop through all scripts and replace DEVELOPMENT_VERSION with the string stored in VERSION
+cp video_* install.sh release/tmp/
+cd release/tmp
+for script in video_*; do
+    sed -i '' "s/DEVELOPMENT_VERSION/${VERSION}/g" "$script"
+done
+
+# Create a new release zip file
+zip ../release_v${VERSION}.zip video_* install.sh
+
+#gh release create v${VERSION} --title "Release v${VERSION}" --generate-notes --draft release/release_v${VERSION}.zip

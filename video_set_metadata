@@ -9,6 +9,13 @@ import subprocess
 from video_slibrary_metadata_utils import get_metadata_all
 from video_slibrary_print_utils import print_green, print_red, print_blue
 
+VERSION = "DEVELOPMENT_VERSION"
+
+# Check if the first argument is -v or --version
+if len(sys.argv) > 1 and sys.argv[1] in ('-v', '--version'):
+    print(f"{VERSION}")
+    sys.exit(0)
+
 def error_exit(message) -> None:
 	print_red(message)
 	sys.exit(1)

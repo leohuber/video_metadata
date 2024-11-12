@@ -2,6 +2,14 @@
 import glob
 import os
 from video_slibrary_print_utils import print_green, print_red, print_blue
+import sys
+
+VERSION = "DEVELOPMENT_VERSION"
+
+# Check if the first argument is -v or --version
+if len(sys.argv) > 1 and sys.argv[1] in ('-v', '--version'):
+    print(f"{VERSION}")
+    sys.exit(0)
 
 print_green("Starting the cleanup process of metadate .json files ...")
 

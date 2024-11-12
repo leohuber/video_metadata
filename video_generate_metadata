@@ -13,6 +13,13 @@ from video_slibrary_metadata_utils import (
     get_headline, get_title_suffix, get_description, get_copyright
 )
 
+VERSION = "DEVELOPMENT_VERSION"
+
+# Check if the first argument is -v or --version
+if len(sys.argv) > 1 and sys.argv[1] in ('-v', '--version'):
+    print(f"{VERSION}")
+    sys.exit(0)
+
 def error_exit(message: str) -> None:
     print_red(message)
     sys.exit(1)
