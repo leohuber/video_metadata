@@ -2,9 +2,9 @@
 Scripts for managing meta data for video files
 
 ## Installation
-* Install Media Info CLI from https://mediaarea.net/en/MediaInfo
-* Install Exiftool from https://exiftool.org
-* TODO: Describe installation routine
+1. Install Media Info CLI from [Media Info](https://mediaarea.net/en/MediaInfo)
+2. Install Exiftool from [Exiftool](https://exiftool.org)
+3. TODO: Describe installation routine
 
 ## Scripts
 
