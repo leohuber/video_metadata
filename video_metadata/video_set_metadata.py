@@ -114,9 +114,9 @@ def set_meta_info(video_file) -> None:
 			return new_name
 		return old_name
 
-	video_file = rename_file(video_file, f"{identifier}_{title_suffix}{extension}")
-	meta_file = rename_file(meta_file, f"{identifier}_{title_suffix}_meta.json")
-	meta_file_all = rename_file(meta_file_all, f"{identifier}_{title_suffix}_meta_all.txt")
+	video_file = rename_file(video_file, os.path.join(os.path.dirname(video_file), f"{identifier}_{title_suffix}{extension}"))
+	meta_file = rename_file(meta_file, os.path.join(os.path.dirname(meta_file), f"{identifier}_{title_suffix}_meta.json"))
+	meta_file_all = rename_file(meta_file_all, os.path.join(os.path.dirname(meta_file_all), f"{identifier}_{title_suffix}_meta_all.txt"))
 
 	print_green("Creating backup of the original files ...")
 
@@ -126,9 +126,9 @@ def set_meta_info(video_file) -> None:
 
 	# add time stamp to file names
 	current_time_suffix = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-	destination_file = os.path.join(os.path.dirname(video_file), f"{identifier}_{title_suffix}-{current_time_suffix}{extension}")
-	destination_meta_file = os.path.join(os.path.dirname(video_file), f"{identifier}_{title_suffix}-{current_time_suffix}_meta.json")
-	destination_meta_file_all = os.path.join(os.path.dirname(video_file), f"{identifier}_{title_suffix}-{current_time_suffix}_meta_all.txt")
+	destination_file = f"{identifier}_{title_suffix}-{current_time_suffix}{extension}"
+	destination_meta_file = f"{identifier}_{title_suffix}-{current_time_suffix}_meta.json"
+	destination_meta_file_all = "{identifier}_{title_suffix}-{current_time_suffix}_meta_all.txt"
 
 	# Copy the original file to the backup directory
 	shutil.copy(video_file, os.path.join(backup_dir, destination_file))
