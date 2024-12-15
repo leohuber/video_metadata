@@ -11,26 +11,12 @@ from lib.video_slibrary_metadata_utils import (
     get_headline, get_title_suffix, get_description, get_copyright
 )
 
-VERSION = "DEVELOPMENT_VERSION"
-
-# Check if the first argument is -v or --version
-if len(sys.argv) > 1 and sys.argv[1] in ('-v', '--version'):
-    print(f"{VERSION}")
-    sys.exit(0)
-
 def error_exit(message: str) -> None:
     print_red(message)
     sys.exit(1)
 
-def check_file_exists(filename: str) -> None:
-    if not os.path.exists(filename):
-        error_exit(f"Could not find file: {filename}")
-
 def generate_metadata(video_file: str) -> None:
     print_green(f"Processing file: {video_file}")
-
-    # Check if video file exists
-    check_file_exists(video_file)
 
     # Extract file extension
     extension = os.path.splitext(video_file)[1][1:].lower()
@@ -38,20 +24,16 @@ def generate_metadata(video_file: str) -> None:
     date_created, identifier = get_date_created_and_identifier(video_file, extension)
     if date_created is None or identifier is None:
         error_exit("date_created or identifier is None. Exiting.")
-
-    # Check if the file extension is either mov or mp4
-    if extension not in ["mov", "mp4"]:
-        error_exit(f"Unsupported file extension: {extension}. Only 'mov' and 'mp4' files are allowed.")
     
     # Rename the file to the identifier
-    destination_file = f"{identifier}.{extension}"
+    destination_file = os.path.join(os.path.dirname(video_file), f"{identifier}.{extension}")
     if os.path.abspath(video_file) != os.path.abspath(destination_file):
         os.rename(video_file, destination_file)
         video_file = destination_file
 
     # Meta data file names
-    meta_file = f"{os.path.splitext(video_file)[0]}_meta.json"
-    meta_all_file = f"{os.path.splitext(video_file)[0]}_meta_all.txt"
+    meta_file = os.path.join(os.path.dirname(video_file), f"{os.path.splitext(os.path.basename(video_file))[0]}_meta.json")
+    meta_all_file = os.path.join(os.path.dirname(video_file), f"{os.path.splitext(os.path.basename(video_file))[0]}_meta_all.txt")
 
     metadata_fields = {
         "IDENTIFIER": identifier,
@@ -115,13 +97,8 @@ def generate_metadata(video_file: str) -> None:
         with open(meta_file_zzz, 'w') as f:
             json.dump(meta_data, f, indent=4)
 
-# Check if the exiftool command is available in the system
-if shutil.which('exiftool') is None:
-    error_exit("Exiftool command not found. Please install it before running this script.")
 
-# Check if at least one video file is provided as a command-line argument
-if len(sys.argv) < 2:
-    error_exit("No video file specified. Please provide at least one video file as an argument.")
+def generate_metadata_for_files(video_files: list) -> None:
+    for video_file in video_files:
+        generate_metadata(video_file)
 
-for movie_file in sys.argv[1:]:
-    generate_metadata(movie_file)
