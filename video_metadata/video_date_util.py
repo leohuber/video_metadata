@@ -1,30 +1,7 @@
 import os
-import shutil
-import sys
 from lib.video_slibrary_print_utils import print_green, print_red, print_blue
 
-VERSION = "DEVELOPMENT_VERSION"
-
-# Check if the first argument is -v or --version
-if len(sys.argv) > 1 and sys.argv[1] in ('-v', '--version'):
-    print(f"{VERSION}")
-    sys.exit(0)
-
-def error_exit(message: str) -> None:
-    print_red(message)
-    sys.exit(1)
-
-# Check if the exiftool command is available in the system
-if shutil.which('exiftool') is None:
-    error_exit("Exiftool command not found. Please install it before running this script.")
-
-# Check if at least one video file is provided as a command-line argument
-if len(sys.argv) < 2:
-    error_exit("No video file specified. Please provide at least one video file as an argument.")
-
-def print_dates(movie_file: str) -> None:
-    print_green(f"Getting dates for video file: {movie_file}")
-    os.system(f'exiftool -G0:1 -s -time:all "{movie_file}"')
-
-for movie_file in sys.argv[1:]:
-    print_dates(movie_file)
+def print_dates(movie_files):
+    for movie_file in movie_files:
+        print_green(f"Getting dates for video file: {movie_file}")
+        os.system(f'exiftool -G0:1 -s -time:all "{movie_file}"')
