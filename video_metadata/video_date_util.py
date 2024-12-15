@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-import glob
 import os
 import shutil
 import sys
-from video_slibrary_print_utils import print_green, print_red, print_blue
+from lib.video_slibrary_print_utils import print_green, print_red, print_blue
 
 VERSION = "DEVELOPMENT_VERSION"
 

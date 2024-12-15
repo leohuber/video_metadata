@@ -1,13 +1,11 @@
-#!/usr/bin/env python3
-
 import datetime
 import json
 import sys
 import shutil
 import os
 import subprocess
-from video_slibrary_metadata_utils import get_metadata_all
-from video_slibrary_print_utils import print_green, print_red, print_blue
+from lib.video_slibrary_metadata_utils import get_metadata_all
+from lib.video_slibrary_print_utils import print_green, print_red, print_blue
 
 VERSION = "DEVELOPMENT_VERSION"
 

@@ -4,4 +4,9 @@ version = "0.1.0"
 description = "Toolsuite to handle Video Metadata"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "click>=8.1.7",
+]
+
+[project.scripts]
+video_metadata = "video_metadata.__main__:cli"
