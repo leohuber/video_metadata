@@ -3,6 +3,7 @@ import sys
 import shutil
 from video_cleanup_metadata import cleanup_metadata_files
 from video_date_util import print_dates_for_movies
+from video_generate_metadata import generate_metadata_for_files
 from lib.video_slibrary_print_utils import print_green, print_red, print_blue
 from lib.video_slibrary_file_utils import expand_path_video
 
@@ -37,11 +38,20 @@ def print_dates(paths):
     PATHS is the directory or file path where the video files are located. Only .mp4 and .mov files are allowed."""
     for path in paths:
         files = expand_path_video(path)
-        print_dates_for_movies(files)
-    #allowed_extensions = ('.mp4', '.mov')
-    #if not any(directory.endswith(ext) for ext in allowed_extensions):
-    #    error_exit("Only .mp4 and .mov files are allowed.")
-    #print_dates(directory)
+        if files:
+            print_dates_for_movies(files)
+
+
+@cli.command()
+@click.argument('paths', nargs=-1, type=click.Path(exists=True, file_okay=True, dir_okay=True))
+def generate(paths):
+    """Generate metadata templates from video files provided.
+    
+    PATHS is the directory or file path where the video files are located. Only .mp4 and .mov files are allowed."""
+    for path in paths:
+        files = expand_path_video(path)
+        if files:
+            generate_metadata_for_files(files)
 
 if __name__ == '__main__':
     cli()
