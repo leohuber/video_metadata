@@ -14,3 +14,4 @@ __pycache__
 **/install_test_footage.sh
 release
 test_footage
+dist
