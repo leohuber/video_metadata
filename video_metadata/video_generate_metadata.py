@@ -76,7 +76,7 @@ def generate_metadata(video_file: str) -> None:
     with open(meta_all_file, 'w') as f:
         f.write(meta_data_all)
 
-    meta_file_zzz = "zzz_meta_data_template.json"
+    meta_file_zzz = os.path.join(os.path.dirname(video_file), "zzz_meta_data_template.json")
     if not os.path.exists(meta_file_zzz):
         meta_data = {
             "MAKE": "Canon - DEFAULT",

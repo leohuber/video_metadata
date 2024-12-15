@@ -7,13 +7,6 @@ import subprocess
 from lib.video_slibrary_metadata_utils import get_metadata_all
 from lib.video_slibrary_print_utils import print_green, print_red, print_blue
 
-VERSION = "DEVELOPMENT_VERSION"
-
-# Check if the first argument is -v or --version
-if len(sys.argv) > 1 and sys.argv[1] in ('-v', '--version'):
-    print(f"{VERSION}")
-    sys.exit(0)
-
 def error_exit(message) -> None:
 	print_red(message)
 	sys.exit(1)
@@ -26,12 +19,7 @@ def set_meta_info(video_file) -> None:
 
 	print_green(f"Processing file: {video_file}")
 
-	check_file_exists(video_file)
-
 	extension = os.path.splitext(video_file)[1].lower()
-
-	if extension not in ['.mov', '.mp4']:
-		error_exit(f"Unsupported file extension: {extension}")
 
 	meta_file = os.path.splitext(video_file)[0] + '_meta.json'
 	check_file_exists(meta_file)
@@ -44,7 +32,7 @@ def set_meta_info(video_file) -> None:
 		meta_data = json.load(f)
 	
 	# Load default meta data from a template file and overwrite the values with the values from default meta data file
-	template_file = "./zzz_meta_data_template.json"
+	template_file = os.path.join(os.path.dirname(video_file), "zzz_meta_data_template.json")
 	if os.path.isfile(template_file):
 		with open(template_file) as f:
 			template_data = json.load(f)
@@ -138,9 +126,9 @@ def set_meta_info(video_file) -> None:
 
 	# add time stamp to file names
 	current_time_suffix = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-	destination_file = f"{identifier}_{title_suffix}-{current_time_suffix}.{extension}"
-	destination_meta_file = f"{identifier}_{title_suffix}-{current_time_suffix}_meta.json"
-	destination_meta_file_all = f"{identifier}_{title_suffix}-{current_time_suffix}_meta_all.txt"
+	destination_file = os.path.join(os.path.dirname(video_file), f"{identifier}_{title_suffix}-{current_time_suffix}{extension}")
+	destination_meta_file = os.path.join(os.path.dirname(video_file), f"{identifier}_{title_suffix}-{current_time_suffix}_meta.json")
+	destination_meta_file_all = os.path.join(os.path.dirname(video_file), f"{identifier}_{title_suffix}-{current_time_suffix}_meta_all.txt")
 
 	# Copy the original file to the backup directory
 	shutil.copy(video_file, os.path.join(backup_dir, destination_file))
@@ -218,14 +206,6 @@ def set_meta_info(video_file) -> None:
 	with open(meta_file_all, 'w') as f:
 		f.write(meta_data_all)
 		
-
-# Check if the exiftool command is available in the system
-if shutil.which('exiftool') is None:
-  error_exit("Exiftol command not found. Please install it before running this script.")
-
-# Check if at least one video file is provided as a command-line argument
-if len(sys.argv) < 2:
-    error_exit("No video file specified. Please provide at least one video file as an argument.")
-
-for movie_file in sys.argv[1:]:
-	set_meta_info(movie_file)
+def set_metadata_for_files(video_files: list) -> None:
+    for video_file in video_files:
+        set_meta_info(video_file)
