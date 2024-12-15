@@ -128,7 +128,7 @@ def set_meta_info(video_file) -> None:
 	current_time_suffix = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 	destination_file = f"{identifier}_{title_suffix}-{current_time_suffix}{extension}"
 	destination_meta_file = f"{identifier}_{title_suffix}-{current_time_suffix}_meta.json"
-	destination_meta_file_all = "{identifier}_{title_suffix}-{current_time_suffix}_meta_all.txt"
+	destination_meta_file_all = f"{identifier}_{title_suffix}-{current_time_suffix}_meta_all.txt"
 
 	# Copy the original file to the backup directory
 	shutil.copy(video_file, os.path.join(backup_dir, destination_file))
