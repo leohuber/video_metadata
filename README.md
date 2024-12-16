@@ -6,6 +6,13 @@ Scripts for managing meta data for video files
 2. Install Exiftool from [Exiftool](https://exiftool.org)
 3. Download .gz file from latest release and install usinge the command 'pip install'
 
+## Setup Development Environment
+
+## Initialize Pre-Commit
+
+uvx pre-commit run --all-files
+uvx pre-commit install
+
 ## Exiftool Group Names
 ExifTool uses group names to categorize metadata tags based on their location and context. Groups are organized into families, and each group has a name that helps identify where a tag comes from.
 
