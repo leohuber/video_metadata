@@ -1,5 +1,5 @@
 import os
-from .lib.video_slibrary_print_utils import print_green
+from video_metadata.lib.video_slibrary_print_utils import print_green
 
 def print_dates_for_movies(movie_files):
     for movie_file in movie_files:

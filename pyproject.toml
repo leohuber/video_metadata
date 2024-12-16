@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [project.scripts]
-video_metadata = "video_metadata.__main__:cli"
+vdm = "video_metadata.__main__:cli"
 
 [build-system]
 requires = ["hatchling"]

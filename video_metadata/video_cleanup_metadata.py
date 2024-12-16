@@ -1,6 +1,6 @@
 import glob
 import os
-from .lib.video_slibrary_print_utils import print_green, print_red, print_blue
+from video_metadata.lib.video_slibrary_print_utils import print_green, print_red, print_blue
 
 def cleanup_metadata_files(directory):
     print_green("Starting the cleanup process of metadata .json files ...")

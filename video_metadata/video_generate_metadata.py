@@ -2,8 +2,8 @@ import os
 import shutil
 import sys
 import json
-from .lib.video_slibrary_print_utils import print_green, print_red, print_blue
-from .lib.video_slibrary_metadata_utils import (
+from video_metadata.lib.video_slibrary_print_utils import print_green, print_red, print_blue
+from video_metadata.lib.video_slibrary_metadata_utils import (
     get_metadata_all, generate_codec_info, get_date_created_and_identifier,
     get_make, get_model, get_source_image_height, get_source_image_width,
     get_video_frame_rate, get_compressor_name, get_gps, get_country_code,

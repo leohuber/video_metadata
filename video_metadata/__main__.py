@@ -1,13 +1,13 @@
 import click
 import sys
 import shutil
-from .video_cleanup_metadata import cleanup_metadata_files
-from .video_date_util import print_dates_for_movies
-from .video_generate_metadata import generate_metadata_for_files
-from .video_set_metadata import set_metadata_for_files
-from .lib.video_slibrary_print_utils import print_red
-from .lib.video_slibrary_file_utils import expand_path_video
-from .__version__ import __version__
+from video_metadata.video_cleanup_metadata import cleanup_metadata_files
+from video_metadata.video_date_util import print_dates_for_movies
+from video_metadata.video_generate_metadata import generate_metadata_for_files
+from video_metadata.video_set_metadata import set_metadata_for_files
+from video_metadata.lib.video_slibrary_print_utils import print_red
+from video_metadata.lib.video_slibrary_file_utils import expand_path_video
+from video_metadata.__version__ import __version__
 
 def error_exit(message: str) -> None:
     print_red(message)
