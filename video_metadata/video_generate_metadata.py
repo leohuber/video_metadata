@@ -24,7 +24,7 @@ def generate_metadata(video_file: str) -> None:
     date_created, identifier = get_date_created_and_identifier(video_file, extension)
     if date_created is None or identifier is None:
         error_exit("date_created or identifier is None. Exiting.")
-    
+
     # Rename the file to the identifier
     destination_file = os.path.join(os.path.dirname(video_file), f"{identifier}.{extension}")
     if os.path.abspath(video_file) != os.path.abspath(destination_file):
@@ -101,4 +101,3 @@ def generate_metadata(video_file: str) -> None:
 def generate_metadata_for_files(video_files: list) -> None:
     for video_file in video_files:
         generate_metadata(video_file)
-

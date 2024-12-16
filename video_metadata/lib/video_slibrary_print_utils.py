@@ -1,7 +1,7 @@
 # This module provides functions to print text in different colors using ANSI escape codes.
-# 
+#
 # ANSI Color Codes:
-# 
+#
 # Text Colors:
 # 30: Black
 # 31: Red
@@ -19,7 +19,7 @@
 # 95: Bright Magenta
 # 96: Bright Cyan
 # 97: Bright White
-# 
+#
 # Background Colors:
 # 40: Black
 # 41: Red
@@ -37,7 +37,7 @@
 # 105: Bright Magenta
 # 106: Bright Cyan
 # 107: Bright White
-# 
+#
 # Text Styles:
 # 0: Reset/Normal
 # 1: Bold/Bright

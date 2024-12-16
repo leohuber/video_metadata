@@ -25,7 +25,7 @@ def cli():
 @click.argument('directory', type=click.Path(exists=True, file_okay=False, dir_okay=True))
 def cleanup_metadata(directory):
     """Cleanup metadata from a directory.
-    
+
     DIRECTORY is the directory where the metadata files are located.
     """
     cleanup_metadata_files(directory)
@@ -34,7 +34,7 @@ def cleanup_metadata(directory):
 @click.argument('paths', nargs=-1, type=click.Path(exists=True, file_okay=True, dir_okay=True))
 def print_dates(paths):
     """Print dates from video files in a directory.
-    
+
     PATHS is the directory or file path where the video files are located. Only .mp4 and .mov files are allowed."""
     for path in paths:
         files = expand_path_video(path)
@@ -46,7 +46,7 @@ def print_dates(paths):
 @click.argument('paths', nargs=-1, type=click.Path(exists=True, file_okay=True, dir_okay=True))
 def generate(paths):
     """Generate metadata templates from video files provided.
-    
+
     PATHS is the directory or file path where the video files are located. Only .mp4 and .mov files are allowed."""
     for path in paths:
         files = expand_path_video(path)
@@ -58,7 +58,7 @@ def generate(paths):
 @click.argument('paths', nargs=-1, type=click.Path(exists=True, file_okay=True, dir_okay=True))
 def set(paths):
     """Set metadata templates for video files provided.
-    
+
     PATHS is the directory or file path where the video files are located. Only .mp4 and .mov files are allowed."""
     for path in paths:
         files = expand_path_video(path)

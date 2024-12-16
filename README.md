@@ -101,4 +101,3 @@ More information:
 
 ### Miscellaneous
 - `-xmp:DigitalSourceType`: Sets and extracts the XMP digital source type tag.
-

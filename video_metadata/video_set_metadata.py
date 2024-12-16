@@ -30,7 +30,7 @@ def set_meta_info(video_file) -> None:
 	# Load meta data from the meta file
 	with open(meta_file) as f:
 		meta_data = json.load(f)
-	
+
 	# Load default meta data from a template file and overwrite the values with the values from default meta data file
 	template_file = os.path.join(os.path.dirname(video_file), "zzz_meta_data_template.json")
 	if os.path.isfile(template_file):
@@ -157,7 +157,7 @@ def set_meta_info(video_file) -> None:
 		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoFrameRate={video_frame_rate}', video_file])
 	if compressor_name:
 		commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original', f'-xmp:VideoCompressor={compressor_name}', video_file])
-	
+
 	commands.append(['exiftool', '-api', 'largefilesupport=1', '-overwrite_original',
 				f'-xmp:ShotDate={date_created}',
 				f'-xmp:DateTimeOriginal={date_created}',
@@ -199,13 +199,13 @@ def set_meta_info(video_file) -> None:
 		result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 		if result.returncode != 0:
 			error_exit(f"Could not update metadata with command: {' '.join(cmd)}")
-			
+
 	# Update all metadata fields
 	meta_data_all = get_metadata_all(video_file)
 	# Write all metadata to a text file
 	with open(meta_file_all, 'w') as f:
 		f.write(meta_data_all)
-		
+
 def set_metadata_for_files(video_files: list) -> None:
     for video_file in video_files:
         set_meta_info(video_file)
