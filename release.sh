@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="1.0.0"
+VERSION="1.1.0"
 
 # Check if GitHub CLI is installed
 if ! command -v gh &> /dev/null
@@ -37,4 +37,4 @@ rm -Rf dist
 uv build
 
 # Create a new release
-#gh release create v${VERSION} --title "Release v${VERSION}" --generate-notes release/release_v${VERSION}.zip
+gh release create v${VERSION} --title "Release v${VERSION}" --generate-notes ./dist/*.gz ./dist/*.whl

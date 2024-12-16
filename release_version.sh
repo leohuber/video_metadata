@@ -7,3 +7,6 @@ sed -i '' "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
 
 # Update the version in the __version__.py file
 sed -i '' "1s/.*/__version__ = \"$VERSION\"/" ./video_metadata/__version__.py
+
+# Update the version in the release.sh file
+sed -i '' "s/^VERSION=.*/VERSION=\"$VERSION\"/" release.sh
