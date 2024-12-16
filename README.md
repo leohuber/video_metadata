@@ -4,39 +4,7 @@ Scripts for managing meta data for video files
 ## Installation
 1. Install Media Info CLI from [Media Info](https://mediaarea.net/en/MediaInfo)
 2. Install Exiftool from [Exiftool](https://exiftool.org)
-3. Download zip file from latest release and run the script install.sh (sudo)
-
-## Scripts
-
-### `video_cleanup_metadata`
-This script cleans up metadata files in the current directory. It searches for all `.json` and `.txt` files and removes them. The script provides feedback on the number of files found and removed.
-
-**Output:**
-- Removes `.json` and `.txt` files in the current directory.
-
-### `video_generate_metadata`
-This script generates metadata for video files. It processes each provided video file, extracts metadata using `exiftool` and `mediainfo`, and writes the metadata to JSON and text files.  The script also creates a default metadata template if it doesn't exist. The JSON file and the default template can be used to edit the metadata and set it using the script `video_set_metadata`.
-
-**Output:**
-- JSON file containing extracted metadata.
-- Text file containing all metadata with group levels 0 and 1.
-
-### `video_set_metadata`
-This script sets metadata for video files based on provided metadata files. It processes each provided video file, updates its metadata using `exiftool`, and creates backups of the original files (video & metadata). The script ensures that mandatory metadata fields are valid and renames files if necessary.
-
-**Output:**
-- Updates metadata of the video files.
-- Creates backups of the original files.
-
-### `video_date_util`
-This script retrieves and prints all date-related metadata for the provided video files. It uses `exiftool` to extract the date information and displays it in a structured format.
-
-**Output:**
-- Prints all date-related metadata for each provided video file.
-
-## Comparing MetaData before and after an update
-
-The script `video_set_metadata` creates a copy of the complete dump of the available metadata before and after the update. The backup of the metadata dump after the update can be found in the backup directory. To compare the metadata before and after the update perform the following command `vim -d backup/file2.txt file1.txt`
+3. Download .gz file from latest release and install usinge the command 'pip install'
 
 ## Exiftool Group Names
 ExifTool uses group names to categorize metadata tags based on their location and context. Groups are organized into families, and each group has a name that helps identify where a tag comes from.
