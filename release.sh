@@ -16,21 +16,25 @@ then
     exit 1
 fi
 
+# Check for uncommitted changes
+if ! git diff-index --quiet HEAD --
+then
+    echo "There are uncommitted changes in the repository. Please commit or stash them to proceed."
+    exit 1
+fi
+
+# Check if we are on the main branch
+current_branch=$(git branch --show-current)
+if [ "$current_branch" != "main" ]; then
+    echo "You are not on the main branch. Please switch to the main branch to proceed."
+    exit 1
+fi
+
 # Remove old versions of release if they exist
-rm -Rf release
+rm -Rf dist
 
-# Create a release directory
-mkdir -p release/tmp
+# Build the module
+uv build
 
-# Loop through all scripts and replace DEVELOPMENT_VERSION with the string stored in VERSION
-cp video_* install.sh release/tmp/
-cd release/tmp
-for script in video_*; do
-    sed -i '' "s/DEVELOPMENT_VERSION/${VERSION}/g" "$script"
-done
-
-# Create a new release zip file
-zip ../release_v${VERSION}.zip video_* install.sh
-cd ../../
-
-gh release create v${VERSION} --title "Release v${VERSION}" --generate-notes release/release_v${VERSION}.zip
+# Create a new release
+#gh release create v${VERSION} --title "Release v${VERSION}" --generate-notes release/release_v${VERSION}.zip
