@@ -1,19 +1,35 @@
 import os
-import shutil
 import sys
 import json
-from video_metadata.lib.video_slibrary_print_utils import print_green, print_red, print_blue
+from video_metadata.lib.video_slibrary_print_utils import print_green, print_red
 from video_metadata.lib.video_slibrary_metadata_utils import (
-    get_metadata_all, generate_codec_info, get_date_created_and_identifier,
-    get_make, get_model, get_source_image_height, get_source_image_width,
-    get_video_frame_rate, get_compressor_name, get_gps, get_country_code,
-    get_country, get_creator, get_state, get_city, get_sublocation,
-    get_headline, get_title_suffix, get_description, get_copyright
+    get_metadata_all,
+    generate_codec_info,
+    get_date_created_and_identifier,
+    get_make,
+    get_model,
+    get_source_image_height,
+    get_source_image_width,
+    get_video_frame_rate,
+    get_compressor_name,
+    get_gps,
+    get_country_code,
+    get_country,
+    get_creator,
+    get_state,
+    get_city,
+    get_sublocation,
+    get_headline,
+    get_title_suffix,
+    get_description,
+    get_copyright,
 )
+
 
 def error_exit(message: str) -> None:
     print_red(message)
     sys.exit(1)
+
 
 def generate_metadata(video_file: str) -> None:
     print_green(f"Processing file: {video_file}")
@@ -32,8 +48,14 @@ def generate_metadata(video_file: str) -> None:
         video_file = destination_file
 
     # Meta data file names
-    meta_file = os.path.join(os.path.dirname(video_file), f"{os.path.splitext(os.path.basename(video_file))[0]}_meta.json")
-    meta_all_file = os.path.join(os.path.dirname(video_file), f"{os.path.splitext(os.path.basename(video_file))[0]}_meta_all.txt")
+    meta_file = os.path.join(
+        os.path.dirname(video_file),
+        f"{os.path.splitext(os.path.basename(video_file))[0]}_meta.json",
+    )
+    meta_all_file = os.path.join(
+        os.path.dirname(video_file),
+        f"{os.path.splitext(os.path.basename(video_file))[0]}_meta_all.txt",
+    )
 
     metadata_fields = {
         "IDENTIFIER": identifier,
@@ -65,15 +87,15 @@ def generate_metadata(video_file: str) -> None:
             print_green(f"Skipping {key} as it has no value.")
 
     codec_info = generate_codec_info(video_file)
-    metadata['CODEC_INFO'] = codec_info
+    metadata["CODEC_INFO"] = codec_info
 
     # Write metadata to a JSON file
-    with open(meta_file, 'w') as f:
+    with open(meta_file, "w") as f:
         json.dump(metadata, f, indent=4)
 
     # Write all metadata to a text file
     meta_data_all = get_metadata_all(video_file)
-    with open(meta_all_file, 'w') as f:
+    with open(meta_all_file, "w") as f:
         f.write(meta_data_all)
 
     meta_file_zzz = os.path.join(os.path.dirname(video_file), "zzz_meta_data_template.json")
@@ -91,10 +113,10 @@ def generate_metadata(video_file: str) -> None:
             "HEADLINE": "Headline - DEFAULT",
             "TITLE_SUFFIX": "title_suffix - DEFAULT",
             "DESCRIPTION": "Description - DEFAULT",
-            "COPYRIGHT": "Leo Huber - DEFAULT"
+            "COPYRIGHT": "Leo Huber - DEFAULT",
         }
 
-        with open(meta_file_zzz, 'w') as f:
+        with open(meta_file_zzz, "w") as f:
             json.dump(meta_data, f, indent=4)
 
 

@@ -16,7 +16,6 @@ repos:
       - id: forbid-new-submodules
       - id: mixed-line-ending
       - id: trailing-whitespace
-        exclude_types: [ svg ]
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
@@ -24,3 +23,15 @@ repos:
       - id: python-no-eval
       - id: python-no-log-warn
       - id: python-use-type-annotations
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+    - id: black
+      language_version: python3.13
+      args: [--line-length=150]
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+    - id: flake8
+      language_version: python3.13
+      args: [--ignore=E501]
