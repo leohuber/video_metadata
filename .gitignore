@@ -8,7 +8,11 @@
 *.MTS
 *.json
 *.pyc
+__pycache__
 **/.DS_Store
 **/meta/*.txt
 **/install_test_footage.sh
 release
+test_footage
+dist
+.venv
