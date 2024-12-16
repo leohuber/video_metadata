@@ -1,6 +1,6 @@
 [project]
 name = "video-metadata"
-version = 1.1.0
+version = "1.1.0"
 description = "Toolsuite to handle Video Metadata"
 readme = "README.md"
 requires-python = ">=3.13"
