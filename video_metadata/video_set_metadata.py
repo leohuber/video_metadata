@@ -4,8 +4,8 @@ import sys
 import shutil
 import os
 import subprocess
-from lib.video_slibrary_metadata_utils import get_metadata_all
-from lib.video_slibrary_print_utils import print_green, print_red, print_blue
+from .lib.video_slibrary_metadata_utils import get_metadata_all
+from .lib.video_slibrary_print_utils import print_green, print_red, print_blue
 
 def error_exit(message) -> None:
 	print_red(message)
